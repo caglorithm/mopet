@@ -160,7 +160,7 @@ class Exploration:
         """
         for rkey, rval in dict_data.items():
             try:
-                ds = self.h5file.create_array(group, rkey, obj=rval)
+                self.h5file.create_array(group, rkey, obj=rval)
             except:
                 logging.warn(f"Could not store dict entry {rkey} (type: {type(rval)})")
 
