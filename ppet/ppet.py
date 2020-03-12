@@ -4,6 +4,8 @@ import numpy as np
 import itertools
 import tables
 import datetime
+import logging
+import time
 
 
 class Exploration:
@@ -29,21 +31,35 @@ class Exploration:
         self.run_id = None
 
         # self.init_ray()
-        self.init_hdf()
+        # self.init_hdf()
 
     def init_ray(self):
         ray.shutdown()
         ray.init()
 
     def init_hdf(self):
-        self.h5file = tables.open_file(
-            self.hdf_filename, mode="a", title="ppet explorations"
-        )
+        self.h5file = tables.open_file(self.hdf_filename, mode="a")
         # self.info_group = self.h5file.create_group("/", "info")
         self.run_group = self.h5file.create_group("/", self.run_name)
-        self.results_group = self.h5file.create_group(
-            self.h5file.root[self.run_name], "results"
+
+        # create group in which all runs will be saved
+        self.runs_group = self.h5file.create_group(
+            self.h5file.root[self.run_name], "runs"
         )
+
+        # create group in which all default parameters will be saved
+        self.params_group = self.h5file.create_group(
+            self.h5file.root[self.run_name], "params"
+        )
+
+        # store parameters
+        for rkey, rval in self.default_params.items():
+            try:
+                ds = self.h5file.create_array(self.params_group, rkey, obj=rval)
+            except:
+                logging.warn(
+                    f"Could not store default parameter {rkey}, type {type(rval)}"
+                )
 
     def cartesian_product_dict(self, input_dict):
         return [
@@ -51,32 +67,59 @@ class Exploration:
             for values in itertools.product(*input_dict.values())
         ]
 
+    def pre_run_routine(self):
+        # initialize the hdf file
+        self.init_hdf()
+
     def run(self):
+
+        self.pre_run_routine()
+
         self.explore_params_list = self.cartesian_product_dict(self.explore_params)
+
+        # run all simulations
         self.run_id = 0
-        for p in self.explore_params_list:
-            self.run_id += 1
+        run_return = {}
+        for update_params in self.explore_params_list:
             run_params = copy.deepcopy(self.default_params)
-            run_params.update(p)
+            run_params.update(update_params)
+            start_time = time.time()
             result_dict = self.evaluate_run(run_params)
-            self.store_result(result_dict, explore_params=p)
+            end_time = time.time() - start_time
+            print(end_time)
+            # results.append(result_dict)
+            run_return[self.run_id] = {}
+            run_return[self.run_id]["params"] = update_params
+            run_return[self.run_id]["result"] = result_dict
+            self.run_id += 1
+
+        # store all results
+        for rkey, rval in run_return.items():
+            self.store_result(rkey, rval)
 
         self.post_run_routine()
 
     def post_run_routine(self):
-        print(self.h5file)
         self.h5file.close()
 
-    def store_results_in_hdf(self, result_dict):
-        run_result_name = "run_" + str(self.run_id)
-        run_results_group = self.h5file.create_group(
-            self.results_group, run_result_name
-        )
+    def store_results_in_hdf(self, result_id, run_return):
+        run_result_name = "run_" + str(result_id)
+
+        result_dict = run_return["result"]
+        update_params = run_return["params"]
+
+        # store result
+        run_results_group = self.h5file.create_group(self.runs_group, run_result_name)
         for rkey, rval in result_dict.items():
             ds = self.h5file.create_array(run_results_group, rkey, obj=rval)
 
-    def store_result(self, result_dict, explore_params):
-        self.store_results_in_hdf(result_dict, explore_params)
+        # store parameters
+        run_params_group = self.h5file.create_group(run_results_group, "params")
+        for rkey, rval in update_params.items():
+            ds = self.h5file.create_array(run_params_group, rkey, obj=rval)
+
+    def store_result(self, result_id, result_dict):
+        self.store_results_in_hdf(result_id, result_dict)
         # store all results in a dictionary
         # self.store_result_in_dictionary(result_dict)
 
