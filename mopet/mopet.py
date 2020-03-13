@@ -267,6 +267,7 @@ class Exploration:
     def load_results(self, exploration_name=None):
         self._open_hdf()
         self._hdf_get_data_from_exploration(exploration_name)
+        self._create_df()
         self._close_hdf()
 
     def _open_hdf(self):
@@ -350,6 +351,7 @@ class Exploration:
         return self.explore_params
 
     def _create_df(self):
+        logging.info("Creating new results DataFrame")
         self.explore_params = self._read_explore_params()
         self.dfResults = pd.DataFrame(
             columns=self.explore_params.keys(), index=self.run_ids, dtype=object
@@ -360,8 +362,10 @@ class Exploration:
 
     @property
     def df(self):
-        if self.dfResults is None:
-            logging.info("Creating new results DataFrame")
-            return self._create_df()
+        if hasattr(self, "dfResults"):
+            if self.dfResults is None:
+                return self._create_df()
+            else:
+                return self.dfResults
         else:
-            return self.dfResults
+            return self._create_df()
