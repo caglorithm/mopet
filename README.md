@@ -15,7 +15,7 @@
   	<img alt="codecov" src="https://codecov.io/gh/caglorithm/mopet/branch/master/graph/badge.svg"></a>
   
   <a href="https://pepy.tech/project/mopet">
-  	<img alt="Downloads" src="https://pepy.tech/badge/mopet"></a>
+  	<img src="https://pepy.tech/badge/mopet"></a>
   
   <a href="https://github.com/psf/black">
   	<img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
@@ -27,7 +27,7 @@
 *The mildly ominous parameter exploration toolkit*
 
 Isn't it strange that, although parameter explorations are a crucial part of computational modeling, there are almost no Python tools available for making your life easier? 
-`mopet` is here to help! You can run extensive grid searches in parallel (powered by `ray`) and store extremely huge amounts of data into a HDF file (powered by `pytables`) for later analysis - or whatever your excuse is for buying a yet another hard disk. 
+`mopet` is here to help! You can run extensive grid searches in parallel (powered by `ray`) and store extremely huge amounts of data into a HDF file (powered by `pytables`) for later analysis - or whatever your excuse is for buying yet another hard disk. 
 
 # Installation 💻
 The easiest way to get going is to install the pypi package using `pip`:
