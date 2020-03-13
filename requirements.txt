@@ -1,0 +1,4 @@
+ray
+numpy
+tables
+pandas
