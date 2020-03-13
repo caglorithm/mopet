@@ -1,0 +1,5 @@
+coverage:
+  precision: 2
+  round: nearest
+  range: "90...100"
+  threshold: 3%
