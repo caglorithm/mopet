@@ -1,5 +1,5 @@
 ray
-numpy
+numpy>=1.16
 tables
 pandas
 tqdm
