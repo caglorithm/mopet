@@ -2,6 +2,7 @@ import ray
 import numpy as np
 import pandas as pd
 import tables
+import tqdm
 
 import copy
 import itertools
@@ -21,6 +22,7 @@ class Exploration:
         explore_params,
         exploration_name=None,
         hdf_filename=None,
+        full_params=True,
     ):
         """Defines a parameter exploration of a given `function`.
         
@@ -34,10 +36,12 @@ class Exploration:
         :type exploration_name: str, optional
         :param hdf_filename: Filename of the hdf storage file, defaults to None
         :type hdf_filename: str, optional
+        :param full_params: Pass full parameter dict to evaluation function if `True`, or else pass only the explored parameters, defaults to True 
         :return: Exploration instance
         """
 
         self.function = function
+        self.full_params = full_params
         self.results = {}
         self.results_params = []
 
@@ -81,10 +85,14 @@ class Exploration:
         self.run_params_dict = {}
         # cycle through all parameter combinations
         for update_params in self.explore_params_list:
-            # load the default parameters
-            run_params = copy.deepcopy(self.default_params)
-            # and update them with the explored parameters
-            run_params.update(update_params)
+
+            if self.full_params:
+                # load the default parameters
+                run_params = copy.deepcopy(self.default_params)
+                # and update them with the explored parameters
+                run_params.update(update_params)
+            else:
+                run_params = copy.deepcopy(update_params)
 
             # start all ray jobs and remember the ray object
             # pylint: disable=no-member
@@ -111,7 +119,7 @@ class Exploration:
         start_time = time.time()
 
         # cycle through all returned ray objects
-        for run_id, ray_return in ray_returns.items():
+        for run_id, ray_return in tqdm.tqdm(ray_returns.items()):
             # get the appropriate parameters for this run
             run_param = self.run_params_dict[run_id]
             # queue object for storage

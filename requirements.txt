@@ -2,3 +2,10 @@ ray
 numpy
 tables
 pandas
+tqdm
+
+# for Ray dashboard
+aiohttp 
+psutil 
+setproctitle
+grpcio
