@@ -136,6 +136,8 @@ class Exploration:
         # tear down hdf storage
         self._post_storage_routine()
 
+        self._shutdown_ray()
+
     def _cartesian_product_dict(self, input_dict):
         """Returns the cartesian product of the exploration parameters.
         
@@ -167,8 +169,17 @@ class Exploration:
     def _init_ray(self):
         """Initialize ray.
         """
-        ray.shutdown()
+        if ray.is_initialized():
+            self._shutdown_ray()
+
         ray.init()
+        assert ray.is_initialized() == True, "Could not initialize ray."
+
+    def _shutdown_ray(self):
+        """Shutdown ray.
+        """
+        ray.shutdown()
+        assert ray.is_initialized() == False, "Could not shutdown ray."
 
     ##############################################
     ## DATA STORAGE
@@ -242,6 +253,10 @@ class Exploration:
 
         # resolve the ray object and get the returned dictionary from the evaluation function
         result_dict = ray.get(ray_object)
+
+        assert isinstance(
+            result_dict, dict
+        ), f"Returned result must be a dictionary, is `{type(result_dict)}`."
 
         self._store_result_in_hdf(run_result_name, result_dict, run_params)
         # store all results in a dictionary
