@@ -18,20 +18,19 @@ class Exploration:
     def __init__(
         self,
         function,
-        default_params,
         explore_params,
+        default_params=None,
         exploration_name=None,
         hdf_filename=None,
-        full_params=True,
     ):
         """Defines a parameter exploration of a given `function`.
         
         :param function: Function to evaluate at each run
         :type function: function
-        :param default_params: Default (shared) parameters to load for each run
-        :type default_params: dict
         :param explore_params: Exploration parameters (individual) for each run
-        :type explore_params: dict
+        :type explore_params: dict        
+        :param default_params: Default (shared) parameters to load for each run, optional, defaults to None
+        :type default_params: dict
         :param exploration_name: Name of the run, will create a name if left empty, defaults to None
         :type exploration_name: str, optional
         :param hdf_filename: Filename of the hdf storage file, defaults to None
@@ -41,11 +40,16 @@ class Exploration:
         """
 
         self.function = function
-        self.full_params = full_params
         self.results = {}
         self.results_params = []
 
-        self.default_params = copy.deepcopy(default_params)
+        if default_params is not None:
+            self.default_params = copy.deepcopy(default_params)
+            self.full_params = True
+        else:
+            self.default_params = None
+            self.full_params = False
+
         self.explore_params = copy.deepcopy(explore_params)
 
         if exploration_name is None:
@@ -86,7 +90,7 @@ class Exploration:
         # cycle through all parameter combinations
         for update_params in self.explore_params_list:
 
-            if self.full_params:
+            if self.full_params and self.default_params is not None:
                 # load the default parameters
                 run_params = copy.deepcopy(self.default_params)
                 # and update them with the explored parameters
@@ -195,12 +199,13 @@ class Exploration:
             self.h5file.root[self.exploration_name], "runs"
         )
 
-        # create group in which all default parameters will be saved
-        self.default_params_group = self.h5file.create_group(
-            self.h5file.root[self.exploration_name], "default_params"
-        )
-        # store default parameters of this exploration
-        self._store_dict_to_hdf(self.default_params_group, self.default_params)
+        if self.default_params is not None:
+            # create group in which all default parameters will be saved
+            self.default_params_group = self.h5file.create_group(
+                self.h5file.root[self.exploration_name], "default_params"
+            )
+            # store default parameters of this exploration
+            self._store_dict_to_hdf(self.default_params_group, self.default_params)
 
         # create group in which exploration parameters will be saved
         self.explore_params_group = self.h5file.create_group(
@@ -279,7 +284,7 @@ class Exploration:
         self._close_hdf()
 
     def _open_hdf(self):
-        self.h5file = tables.open_file(self.hdf_filename, mode="r")
+        self.h5file = tables.open_file(self.hdf_filename, mode="r+")
         logging.info(f"{self.hdf_filename} opened for reading.")
 
     def _close_hdf(self):
