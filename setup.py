@@ -12,7 +12,7 @@ with open("requirements.txt") as f:
 setuptools.setup(
     name="mopet",
     version="0.1.1",
-    description="Mildly ominous parameter exploration toolkit",
+    description="The mildly ominous parameter exploration toolkit",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/caglorithm/mopet",
