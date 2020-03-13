@@ -21,7 +21,7 @@ class TestExploration(unittest.TestCase):
         params = {"x": 1.3, "y": 2.7, "z": 0.0}
         explore_params = {"x": np.linspace(-2, 2, 2), "y": np.linspace(-2, 2, 2)}
 
-        ex = mopet.Exploration(evalFunction, params, explore_params)
+        ex = mopet.Exploration(evalFunction, explore_params, params)
 
         ex.run()
         ex.load_results()
