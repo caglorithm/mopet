@@ -87,8 +87,9 @@ class Exploration:
         ray_returns = {}
         # contains all exploration parameters of each run
         self.run_params_dict = {}
+        logging.info(f"Starting {len(self.explore_params_list)} jobs.")
         # cycle through all parameter combinations
-        for update_params in self.explore_params_list:
+        for update_params in tqdm.tqdm(self.explore_params_list):
 
             if self.full_params and self.default_params is not None:
                 # load the default parameters
@@ -357,6 +358,8 @@ class Exploration:
         for array in group:
             if isinstance(array, tables.array.Array):
                 value = array.read()
+                if not isinstance(value, np.ndarray):
+                    value = np.array(value)
                 # convert 0-dim arrays to floats
                 if value.ndim == 0:
                     value = np.float(value)
