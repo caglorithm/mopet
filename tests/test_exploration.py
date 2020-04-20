@@ -24,6 +24,5 @@ class TestExploration(unittest.TestCase):
         ex = mopet.Exploration(evalFunction, explore_params, params)
 
         ex.run()
-        ex.load_results()
+        ex.load_results(all=True)
         ex.df
-

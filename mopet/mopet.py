@@ -65,6 +65,9 @@ class Exploration:
         self.run_id = None
         self.dfResults = None
 
+        # status
+        self._hdf_open_for_reading = False
+
     def run(self):
         """Start parameter exploration.
         """
@@ -293,21 +296,63 @@ class Exploration:
     ## READ DATA
     ##############################################
 
-    def load_results(self, exploration_name=None):
-        self._open_hdf()
-        self._hdf_get_data_from_exploration(exploration_name)
-        self._create_df()
-        self._close_hdf()
+    def load_results(
+        self, filename=None, exploration_name=None, aggregate=True, all=False
+    ):
+        if exploration_name is None:
+            exploration_name = self.exploration_name
+        else:
+            self.exploration_name = exploration_name
 
-    def _open_hdf(self):
+        self._open_hdf(filename=filename)
+        self._load_all_results(exploration_name, all=all)
+        self._create_df()
+        if aggregate:
+            self._aggregate_results(exploration_name)
+        self.close_hdf()
+
+    def _create_df(self):
+        logging.info("Creating new results DataFrame")
+        self.explore_params = self._read_explore_params()
+        self.dfResults = pd.DataFrame(
+            columns=self.explore_params.keys(), index=self.run_ids, dtype=object
+        )
+        for key, value in self.params.items():
+            self.dfResults.loc[key] = value
+        return self.dfResults
+
+    def _open_hdf(self, filename=None):
+        if filename is not None:
+            self.hdf_filename = filename
+        assert (
+            self.hdf_filename is not None
+        ), "No hdf filename was given or previously set."
+
         self.h5file = tables.open_file(self.hdf_filename, mode="r+")
+        self._hdf_open_for_reading = True
         logging.info(f"{self.hdf_filename} opened for reading.")
 
-    def _close_hdf(self):
+    def close_hdf(self):
         self.h5file.close()
+        self._hdf_open_for_reading = False
         logging.info(f"{self.hdf_filename} closed.")
 
-    def _hdf_get_data_from_exploration(self, exploration_name=None):
+    def _aggregate_results(self, exploration_name=None):
+        nan_value = np.nan
+        logging.info("Aggregating scalar results ...")
+        for runId, parameters in tqdm.tqdm(
+            self.dfResults.iterrows(), total=len(self.dfResults)
+        ):
+            result = self.get_run(runId)
+            for key, value in result.items():
+                if isinstance(value, float):
+                    self.dfResults.loc[runId, key] = value
+                else:
+                    self.dfResults.loc[runId, key] = nan_value
+        # drop nan columns
+        self.dfResults = self.dfResults.dropna(axis="columns", how="all")
+
+    def _load_all_results(self, exploration_name=None, all=True):
         if exploration_name is None:
             exploration_name = self.exploration_name
         else:
@@ -321,36 +366,44 @@ class Exploration:
         self.run_names = []
         self.run_ids = []
 
-        runs_group = self.h5file.get_node("/" + self.exploration_name, "runs")
-
-        for child in runs_group:
+        hdf_runs_group = self.h5file.get_node("/" + self.exploration_name, "runs")
+        logging.debug(f"Loading {len(list(hdf_runs_group))} results.")
+        for hdf_run in tqdm.tqdm(hdf_runs_group, total=len(list(hdf_runs_group))):
             # get run name
-            run_name = child._v_name
+            run_name = hdf_run._v_name
             self.run_names.append(run_name)
             # get id of run
             run_id = int(run_name[len(self.RUN_PREFIX) :])
             self.run_ids.append(run_id)
             # get results data
-            self._get_run_results(child, run_id)
+            if all:
+                self.results[run_id] = self._read_group_as_dict(hdf_run)
+            self.params[run_id] = self._get_run_parameters(hdf_run)
 
-        logging.info(f"{len(self.results)} results loaded.")
+        logging.debug(f"{len(self.results)} results loaded to memory.")
 
-    def _get_run_results(self, hdf_run, run_id=None):
-        # hack to get the name of the group, I bet there is a better way
-        if run_id is None:
-            run_id = str(hdf_run._v_name)
-        self.results[run_id] = {}
-        self.params[run_id] = {}
-        self.results[run_id] = self._read_group_as_dict(hdf_run)
-        self.params[run_id] = self._get_run_parameters(hdf_run)
-        # for child in hdf_run:
-        #     # if the child is another group (parameters)
-        #     if isinstance(child, tables.group.Group):
-        #         # param = {}
-        #         param = self._read_group_as_dict(child)
-        #         # if there was at leas one array in the group
-        #         if len(param):
-        #             self.params[run_id] = param
+    def get_run(self, run_id=None, run_name=None, exploration_name=None):
+        # get result by id or if not then by run_name (hdf_run)
+        assert (
+            run_id is not None or run_name is not None
+        ), "Either use `run_id` or `run_name`."
+
+        if exploration_name is None:
+            exploration_name = self.exploration_name
+        else:
+            self.exploration_name = exploration_name
+
+        if run_id is not None:
+            run_name = self.RUN_PREFIX + str(run_id)
+
+        if not self._hdf_open_for_reading:
+            self._open_hdf()
+        run_results_group = self.h5file.get_node("/" + self.exploration_name, "runs")[
+            run_name
+        ]
+
+        result = self._read_group_as_dict(run_results_group)
+        return result
 
     def _read_group_as_dict(self, group):
         return_dict = {}
@@ -380,16 +433,6 @@ class Exploration:
         )
         self.explore_params = self._read_group_as_dict(explore_params_group)
         return self.explore_params
-
-    def _create_df(self):
-        logging.info("Creating new results DataFrame")
-        self.explore_params = self._read_explore_params()
-        self.dfResults = pd.DataFrame(
-            columns=self.explore_params.keys(), index=self.run_ids, dtype=object
-        )
-        for key, value in self.params.items():
-            self.dfResults.loc[key] = value
-        return self.dfResults
 
     @property
     def df(self):
