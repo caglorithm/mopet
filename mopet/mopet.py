@@ -388,6 +388,11 @@ class Exploration:
     ##############################################
 
     def _create_df(self):
+        """Create results dataframe and will it with columns according to the explored parameters.
+
+        :return: dfResults
+        :rtype: pd.DataFrame
+        """
         logging.info("Creating new results DataFrame")
         self.explore_params = self._read_explore_params()
         self.dfResults = pd.DataFrame(
@@ -398,6 +403,11 @@ class Exploration:
         return self.dfResults
 
     def _open_hdf(self, filename=None):
+        """Open a hdf file as `.h5file` for reading later.
+
+        :param filename: Filename of HDF file, defaults to None
+        :type filename: str, optional
+        """
         if filename is not None:
             self.hdf_filename = filename
         assert (
@@ -416,6 +426,14 @@ class Exploration:
         logging.info(f"{self.hdf_filename} closed.")
 
     def _aggregate_results(self, exploration_name=None):
+        """Go through all results saved in `.results` and store all floats in the results table.
+
+        TODO: Direct reading from hdf without having to load it to memory, like in neurolib
+        TODO: Storage of non-scalar values, like in neurolib
+
+        :param exploration_name: [description], defaults to None
+        :type exploration_name: [type], optional
+        """
         nan_value = np.nan
         logging.info("Aggregating scalar results ...")
         for runId, parameters in tqdm.tqdm(
@@ -431,6 +449,13 @@ class Exploration:
         self.dfResults = self.dfResults.dropna(axis="columns", how="all")
 
     def _load_all_results(self, exploration_name=None, all=True):
+        """Load all results in hdf file into `.results` (if all=True). Load all explored parameters into `.params`.
+
+        :param exploration_name: Name of the run, defaults to None
+        :type exploration_name: str, optional
+        :param all: Whether to load everything into ram or not, defaults to True
+        :type all: bool, optional
+        """
         if exploration_name is None:
             exploration_name = self.exploration_name
         else:
@@ -461,6 +486,13 @@ class Exploration:
         logging.debug(f"{len(self.results)} results loaded to memory.")
 
     def _read_group_as_dict(self, group):
+        """Read an HDF group and return a dictionary.
+
+        :param group: hdf group
+        :type group: tables.group.Group
+        :return: Dictionary with data of the group.
+        :rtype: dict
+        """
         return_dict = {}
         # iterate through all arrays in that group
         for array in group:
@@ -476,6 +508,13 @@ class Exploration:
         return return_dict
 
     def _get_run_parameters(self, hdf_run):
+        """Get the parameters of a run
+
+        :param hdf_run: Tables group
+        :type hdf_run: tables.group.Group
+        :return: Parameters as a dictionary
+        :rtype: dict
+        """
         run_params = {}
         if isinstance(hdf_run, tables.group.Group):
             run_params_group = self.h5file.get_node(hdf_run, "params")
@@ -483,6 +522,11 @@ class Exploration:
         return run_params
 
     def _read_explore_params(self):
+        """Get explored parameters of from opened hdf file.
+
+        :return: Dictionary with explored parameters
+        :rtype: dict
+        """
         explore_params_group = self.h5file.get_node(
             "/" + self.exploration_name, "explore_params"
         )
@@ -491,6 +535,11 @@ class Exploration:
 
     @property
     def df(self):
+        """Returns a dataframe with exploration results. Creates it from new if it doesn't exist yet.
+
+        :return: Dataframe with exploration results
+        :rtype: pandas.DataFrame
+        """
         if hasattr(self, "dfResults"):
             if self.dfResults is None:
                 return self._create_df()
