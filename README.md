@@ -52,11 +52,11 @@ Setting up an exploration is as easy as can be!
 def distance_from_circle(params):
 	# let's simply calculate the distance of 
 	# the x-y parameters to the unit circle
-    distance = abs((params["x"] ** 2 + params["y"] ** 2) - 1)
-    
-    # we package the result in a dictionary
-    result = {"result" : distance}
-    return result
+	distance = abs((params["x"] ** 2 + params["y"] ** 2) - 
+	
+	# we package the result into a dictionary
+	result = {"result" : distance}
+	return result
 
 ``` 
 
