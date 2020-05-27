@@ -15,6 +15,10 @@ class Exploration:
 
     RUN_PREFIX = "run_"
 
+    ##############################################
+    ## USER FUNCTIONS
+    ##############################################
+
     def __init__(
         self,
         function,
@@ -70,6 +74,8 @@ class Exploration:
 
     def run(self):
         """Start parameter exploration.
+
+        TODO: Pass kwargs in run() to the exploration function
         """
         # Initialize ray
         self._init_ray()
@@ -141,6 +147,91 @@ class Exploration:
         self._post_storage_routine()
 
         self._shutdown_ray()
+
+    def load_results(
+        self, filename=None, exploration_name=None, aggregate=True, all=False
+    ):
+        """Load results from previouis explorations. This function 
+        will open an HDF file and look for an exploration. It will 
+        create a Pandas `Dataframe` object (accessible thorugh the 
+        attribute `.df`) with a list of all runs and their paramters. 
+        
+        You can load the exploration results using following paramters:
+
+        - If `aggregate==True`, all scalar results (such as `float` 
+        or `int`) from the exploration will be added to the Dataframe.
+        - If `all==True`, then all results, including arrays and other
+        types, will be saved in the attribute `.results`. This can take
+        up a lot of RAM since all results will be available. Only
+        use this option if you know that you have enough memory. Otherwise,
+        you might want to skip this and load results separately using the
+        method `.get_run()`.
+
+        :param filename: Filename of HDF file, usese default filename or previously used filename if not given, defaults to None
+        :type filename: str, optional
+        :param exploration_name: Name of the exploration, same as the group names of the explorations in the HDF file, defaults to None
+        :type exploration_name: str, optional
+        :param aggregate: Aggregate scalar results into the results Dataframe. If this option is enabled, , defaults to True
+        :type aggregate: bool, optional
+        :param all: Load all results into a dictionary available as the attribute `.results`. Can use a lot of RAM, defaults to False
+        :type all: bool, optional
+        """
+        if exploration_name is None:
+            exploration_name = self.exploration_name
+        else:
+            self.exploration_name = exploration_name
+
+        self._open_hdf(filename=filename)
+        self._load_all_results(exploration_name, all=all)
+        self._create_df()
+        if aggregate:
+            self._aggregate_results(exploration_name)
+        self.close_hdf()
+
+    def get_run(self, run_id=None, run_name=None, filename=None, exploration_name=None):
+        """Get a sigle result from a previous exploration. This function
+        will load a single result from the HDF file. Use this function
+        if you want to avoid loading all results to memory, which you can 
+        do using `.load_results(all=True)`.
+
+        Note: This function will open the HDF for reading but will not close
+        it afterwards! This is to speed up many sequential loads but it also
+        means that you have to close the HDF file yourself. You can do this
+        by uysing `.close_hdf()`.
+
+        :param run_id: Unique id of the run. Has to be given if run_name is not given, defaults to None
+        :type run_id: int, optional
+        :param run_name: The name of the run. Has to be given if run_id is not given, defaults to None
+        :type run_name: str, optional
+        :param exploration_name: Filename of the HDF with previous exploration results. Previously used filename will be used if not given, defaults to None
+        :type exploration_name: str, optional
+        :param exploration_name: Name of the exploration to load data from. Previously used exploration_name will be used if not given, defaults to None
+        :type exploration_name: str, optional
+        
+        :return: Results of the run
+        :rtype: dict
+        """
+        # get result by id or if not then by run_name (hdf_run)
+        assert (
+            run_id is not None or run_name is not None
+        ), "Either use `run_id` or `run_name`."
+
+        if exploration_name is None:
+            exploration_name = self.exploration_name
+        else:
+            self.exploration_name = exploration_name
+
+        if run_id is not None:
+            run_name = self.RUN_PREFIX + str(run_id)
+
+        if not self._hdf_open_for_reading:
+            self._open_hdf(filename)
+        run_results_group = self.h5file.get_node("/" + self.exploration_name, "runs")[
+            run_name
+        ]
+
+        result = self._read_group_as_dict(run_results_group)
+        return result
 
     def _cartesian_product_dict(self, input_dict):
         """Returns the cartesian product of the exploration parameters.
@@ -296,21 +387,6 @@ class Exploration:
     ## READ DATA
     ##############################################
 
-    def load_results(
-        self, filename=None, exploration_name=None, aggregate=True, all=False
-    ):
-        if exploration_name is None:
-            exploration_name = self.exploration_name
-        else:
-            self.exploration_name = exploration_name
-
-        self._open_hdf(filename=filename)
-        self._load_all_results(exploration_name, all=all)
-        self._create_df()
-        if aggregate:
-            self._aggregate_results(exploration_name)
-        self.close_hdf()
-
     def _create_df(self):
         logging.info("Creating new results DataFrame")
         self.explore_params = self._read_explore_params()
@@ -333,6 +409,8 @@ class Exploration:
         logging.info(f"{self.hdf_filename} opened for reading.")
 
     def close_hdf(self):
+        """Close a previously opened HDF file.
+        """
         self.h5file.close()
         self._hdf_open_for_reading = False
         logging.info(f"{self.hdf_filename} closed.")
@@ -381,29 +459,6 @@ class Exploration:
             self.params[run_id] = self._get_run_parameters(hdf_run)
 
         logging.debug(f"{len(self.results)} results loaded to memory.")
-
-    def get_run(self, run_id=None, run_name=None, exploration_name=None):
-        # get result by id or if not then by run_name (hdf_run)
-        assert (
-            run_id is not None or run_name is not None
-        ), "Either use `run_id` or `run_name`."
-
-        if exploration_name is None:
-            exploration_name = self.exploration_name
-        else:
-            self.exploration_name = exploration_name
-
-        if run_id is not None:
-            run_name = self.RUN_PREFIX + str(run_id)
-
-        if not self._hdf_open_for_reading:
-            self._open_hdf()
-        run_results_group = self.h5file.get_node("/" + self.exploration_name, "runs")[
-            run_name
-        ]
-
-        result = self._read_group_as_dict(run_results_group)
-        return result
 
     def _read_group_as_dict(self, group):
         return_dict = {}

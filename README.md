@@ -75,17 +75,35 @@ Running the exploration is in parallel and is handled by `ray`. You can also use
 ```python
 ex.run()
 >> 100%|██████████| 441/441 [426.57it/s]
-ex.load_results()
 ```
 
-An overview of the runs and runs is given as a `pandas` DataFrame, available as `ex.df`. Here we load the result, which is simply a `float`, directly into the DataFrame. However, if the result was a timeseries (a `numpy.ndarray`), we could process it at this stage and extract some scalar value, for example the amplitude of the data or the dominant frequency. Using some fancy pivoting, we can create a 2D matrix with the results as entries
+After your exploration has finished, you will find a file `exploration.h5` in your current directory with all the runs, their parameters and their outputs, neatly organized. If you open this file (with [HDFView](https://www.hdfgroup.org/downloads/hdfview/) for example), you'll see something like this:
 
+<p align="center">
+  	<img alt="Build" src="resources/hdf_file.jpg">
+</p>
+  
+  
+
+## Loading exploration results
+
+You can load the exploration results using 
 
 ```python
-ex.df["result"] = None
-for r in ex.df.index:
-    ex.df.loc[r, "result"] = ex.results[r]['result']
-    
+ex.load_results(all=True)
+``` 
+
+Note that using `all=True` will load all results into memory. Please make sure that you have enough free memory for this. If not, do not use `all=True` but load individual results using their `run_id` (which is an integer counting up one per run):
+
+```python
+ex.get_run(run_id=0)
+``` 
+
+After using `ex.load_results()`, an overview of all runs and their parameters is given as a `pandas` DataFrame, available as `ex.df`. Using `ex.load_results()` with the default parameters will automatically aggregate all scalar results into this table, like `distance` in our example above, which is a float.
+
+Using some fancy pivoting, we can create a 2D matrix with the results as entries
+
+```python
 pivoted = ex.df.pivot_table(values='result', index = 'y', columns='x', aggfunc='first')
 ```
 <p align="center">
