@@ -151,7 +151,7 @@ class Exploration:
     def load_results(
         self, filename=None, exploration_name=None, aggregate=True, all=False
     ):
-        """Load results from previouis explorations. This function 
+        """Load results from previous explorations. This function 
         will open an HDF file and look for an exploration. It will 
         create a Pandas `Dataframe` object (accessible thorugh the 
         attribute `.df`) with a list of all runs and their paramters. 
@@ -167,11 +167,11 @@ class Exploration:
         you might want to skip this and load results separately using the
         method `.get_run()`.
 
-        :param filename: Filename of HDF file, usese default filename or previously used filename if not given, defaults to None
+        :param filename: Filename of HDF file, uses default filename or previously used filename if not given, defaults to None
         :type filename: str, optional
         :param exploration_name: Name of the exploration, same as the group names of the explorations in the HDF file, defaults to None
         :type exploration_name: str, optional
-        :param aggregate: Aggregate scalar results into the results Dataframe. If this option is enabled, , defaults to True
+        :param aggregate: Aggregate scalar results into the results Dataframe. If this option is enabled, defaults to True
         :type aggregate: bool, optional
         :param all: Load all results into a dictionary available as the attribute `.results`. Can use a lot of RAM, defaults to False
         :type all: bool, optional
@@ -189,7 +189,7 @@ class Exploration:
         self.close_hdf()
 
     def get_run(self, run_id=None, run_name=None, filename=None, exploration_name=None):
-        """Get a sigle result from a previous exploration. This function
+        """Get a single result from a previous exploration. This function
         will load a single result from the HDF file. Use this function
         if you want to avoid loading all results to memory, which you can 
         do using `.load_results(all=True)`.
