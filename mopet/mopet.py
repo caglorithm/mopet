@@ -66,7 +66,6 @@ class Exploration:
             hdf_filename = "exploration.h5"
         self.hdf_filename = hdf_filename
 
-        self.run_id = None
         self.dfResults = None
 
         # status
@@ -90,7 +89,7 @@ class Exploration:
         # remember the time
         start_time = time.time()
         # a unique id for each run
-        self.run_id = 0
+        run_id = 0
 
         # contains ray objects of each run
         ray_returns = {}
@@ -110,13 +109,13 @@ class Exploration:
 
             # start all ray jobs and remember the ray object
             # pylint: disable=no-member
-            ray_returns[self.run_id] = self._ray_remote.remote(self, run_params)
+            ray_returns[run_id] = self._ray_remote.remote(self, run_params)
 
             # store this runs explore parameters
-            self.run_params_dict[self.run_id] = copy.deepcopy(update_params)
+            self.run_params_dict[run_id] = copy.deepcopy(update_params)
 
             # increment the run id
-            self.run_id += 1
+            run_id += 1
 
         # stop measuring time
         end_time = time.time() - start_time
@@ -354,8 +353,6 @@ class Exploration:
         ), f"Returned result must be a dictionary, is `{type(result_dict)}`."
 
         self._store_result_in_hdf(run_result_name, result_dict, run_params)
-        # store all results in a dictionary
-        # self._store_result_in_dictionary(result_id, result_dict)
 
     def _store_result_in_hdf(self, run_result_name, result_dict, run_params):
         """Stores the results of a ray object of a single run and the parameters of the run.
@@ -379,9 +376,6 @@ class Exploration:
         run_params_group = self.h5file.create_group(run_results_group, "params")
         # store the parameter dictionary
         self._store_dict_to_hdf(run_params_group, run_params)
-
-    def _store_result_in_dictionary(self, result_id, result_dict):
-        self.results[self.run_id] = copy.deepcopy(result_dict)
 
     ##############################################
     ## READ DATA
