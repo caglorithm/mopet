@@ -10,9 +10,11 @@ import datetime
 import logging
 import time
 
+from tables import NoSuchNodeError
+from mopet.exceptions import ExplorationNotFoundError, Hdf5FileNotExistsError
+
 
 class Exploration:
-
     RUN_PREFIX = "run_"
 
     ##############################################
@@ -231,6 +233,7 @@ class Exploration:
         
         :return: Results of the run
         :rtype: dict
+        :raises: NoSuchExplorationError if hdf5 file does not contain `exploration_name` group.
         """
         # get result by id or if not then by run_name (hdf_run)
         assert (
@@ -245,9 +248,17 @@ class Exploration:
 
         if not self._hdf_open_for_reading:
             self._open_hdf(filename)
-        run_results_group = self.h5file.get_node("/" + self.exploration_name, "runs")[
-            run_name
-        ]
+
+        try:
+            run_results_group = self.h5file.get_node(
+                "/" + self.exploration_name, "runs"
+            )[run_name]
+        except NoSuchNodeError:
+            raise ExplorationNotFoundError(
+                "Exploration %s could not be found in HDF file %s".format(
+                    self.exploration_name, self.hdf_filename
+                )
+            )
 
         result = self._read_group_as_dict(run_results_group)
         return result
@@ -322,8 +333,16 @@ class Exploration:
 
     def _init_hdf(self):
         """Create hdf storage file and all necessary groups.
+
+        :raises Hdf5FileNotExistsError
         """
-        self.h5file = tables.open_file(self.hdf_filename, mode="a")
+        try:
+            self.h5file = tables.open_file(self.hdf_filename, mode="a")
+        except IOError:
+            raise Hdf5FileNotExistsError(
+                "Hdf5 file %s does not exist".format(self.hdf_filename)
+            )
+
         self.run_group = self.h5file.create_group("/", self.exploration_name)
 
         # create group in which all data from runs will be saved
@@ -426,6 +445,7 @@ class Exploration:
 
         :param filename: Filename of HDF file, defaults to None
         :type filename: str, optional
+        :raises Hdf5FileNotExistsError
         """
         if filename is not None:
             self.hdf_filename = filename
@@ -433,7 +453,13 @@ class Exploration:
             self.hdf_filename is not None
         ), "No hdf filename was given or previously set."
 
-        self.h5file = tables.open_file(self.hdf_filename, mode="r+")
+        try:
+            self.h5file = tables.open_file(self.hdf_filename, mode="r+")
+        except OSError:
+            raise Hdf5FileNotExistsError(
+                "Hdf5 file %s does not exist".format(self.hdf_filename)
+            )
+
         self._hdf_open_for_reading = True
         logging.info(f"{self.hdf_filename} opened for reading.")
 
@@ -474,6 +500,7 @@ class Exploration:
         :type exploration_name: str, optional
         :param all: Whether to load everything into ram or not, defaults to True
         :type all: bool, optional
+        :raises Hdf5FileNotExistsError, ExplorationNotFoundError
         """
         if exploration_name is None:
             exploration_name = self.exploration_name
