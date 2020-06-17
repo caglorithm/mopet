@@ -39,7 +39,6 @@ class Exploration:
         :type exploration_name: str, optional
         :param hdf_filename: Filename of the hdf storage file, defaults to None
         :type hdf_filename: str, optional
-        :param full_params: Pass full parameter dict to evaluation function if `True`, or else pass only the explored parameters, defaults to True 
         :return: Exploration instance
         """
 
@@ -215,9 +214,7 @@ class Exploration:
             run_id is not None or run_name is not None
         ), "Either use `run_id` or `run_name`."
 
-        if exploration_name is None:
-            exploration_name = self.exploration_name
-        else:
+        if exploration_name:
             self.exploration_name = exploration_name
 
         if run_id is not None:
@@ -284,8 +281,8 @@ class Exploration:
         
         :param group: group in hdf file to store data in
         :type group: [type]
-        :param dict: dictionary with data to store
-        :type dict: dict
+        :param dict_data: dictionary with data to store
+        :type dict_data: dict
         """
         for rkey, rval in dict_data.items():
             try:
@@ -339,8 +336,8 @@ class Exploration:
         :type result_id: int
         :param ray_object: ray object
         :type ray_object: ray object
-        :param run_param: explored parameters of the run
-        :type run_param: dict
+        :param run_params: explored parameters of the run
+        :type run_params: dict
         """
         # set the name of this run for naming the hdf group
         run_result_name = self.RUN_PREFIX + str(result_id)
@@ -359,8 +356,6 @@ class Exploration:
         
         :param run_result_name: Name of the result
         :type run_result_name: str
-        :param run_return: ray object of the run
-        :type run_return: ray object
         :param run_params: Explored parameters of the run
         :type run_params: dict
         """
