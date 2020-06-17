@@ -10,7 +10,7 @@ python:
 install:
   - pip install -r requirements.txt
   #- pip install --upgrade numpy
-  - pip install pytest flake8 codecov pytest-cov wheel setuptools
+  - pip install --upgrade pytest flake8 codecov pytest-cov wheel setuptools
   - python setup.py sdist bdist_wheel
   - pip install --upgrade dist/*
 
