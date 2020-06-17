@@ -336,6 +336,8 @@ class Exploration:
         :type result_id: int
         :param ray_object: ray object
         :type ray_object: ray object
+        :param run_params: explored parameters of the run
+        :type run_params: dict
         """
         # set the name of this run for naming the hdf group
         run_result_name = self.RUN_PREFIX + str(result_id)
