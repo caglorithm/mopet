@@ -275,13 +275,13 @@ class Exploration:
             self._shutdown_ray()
 
         ray.init()
-        assert ray.is_initialized() == True, "Could not initialize ray."
+        assert ray.is_initialized() is True, "Could not initialize ray."
 
     def _shutdown_ray(self):
         """Shutdown ray.
         """
         ray.shutdown()
-        assert ray.is_initialized() == False, "Could not shutdown ray."
+        assert ray.is_initialized() is False, "Could not shutdown ray."
 
     ##############################################
     ## DATA STORAGE
