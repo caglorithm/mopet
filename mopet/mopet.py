@@ -157,6 +157,8 @@ class Exploration:
             run_param = self.run_params_dict[run_id]
             # queue object for storage
             self._store_result(run_id, ray_return, run_param)
+            # remove LOCAL_REFERENCE in form of ObjectId from ray's object store.
+            ray_returns[run_id] = None
 
         # stop measuring time
         end_time = time.time() - start_time
