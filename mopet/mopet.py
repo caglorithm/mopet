@@ -312,11 +312,13 @@ class Exploration:
         :param dict_data: dictionary with data to store
         :type dict_data: dict
         """
-        for rkey, rval in dict_data.items():
+        for r_key, r_val in dict_data.items():
             try:
-                self.h5file.create_array(group, rkey, obj=rval)
+                self.h5file.create_array(group, r_key, obj=r_val)
             except:
-                logging.warn(f"Could not store dict entry {rkey} (type: {type(rval)})")
+                logging.warning(
+                    f"Could not store dict entry {r_key} (type: {type(r_val)})"
+                )
 
     def _init_hdf(self):
         """Create hdf storage file and all necessary groups.
@@ -391,8 +393,8 @@ class Exploration:
         # create the results group
         run_results_group = self.h5file.create_group(self.runs_group, run_result_name)
         # store each item in the dictionary
-        for rkey, rval in result_dict.items():
-            self.h5file.create_array(run_results_group, rkey, obj=rval)
+        for r_key, r_val in result_dict.items():
+            self.h5file.create_array(run_results_group, r_key, obj=r_val)
 
         # store parameters
         # create parameters group
