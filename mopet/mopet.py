@@ -26,6 +26,8 @@ class Exploration:
         default_params=None,
         exploration_name=None,
         hdf_filename=None,
+        num_cpus: int = None,
+        num_gpus: int = None,
     ):
         """Defines a parameter exploration of a given `function`.
         
@@ -39,6 +41,10 @@ class Exploration:
         :type exploration_name: str, optional
         :param hdf_filename: Filename of the hdf storage file, defaults to None
         :type hdf_filename: str, optional
+        :param num_cpus: Number of desired CPU cores passed to ray, defaults to None
+        :type num_cpus: int, optional
+        :param num_gpus: Number of desired GPUs passed to ray, defaults to None
+        :type num_gpus: int, optional
         :return: Exploration instance
         """
 
@@ -81,18 +87,17 @@ class Exploration:
         # Will be filled when calling `load_results`.
         self.params = {}
 
-    def run(self, num_cpus: int = None, num_gpus: int = None):
+        # Ray configuration
+        self.num_gpus = num_gpus
+        self.num_cpus = num_cpus
+
+    def run(self):
         """Start parameter exploration.
 
         TODO: Pass kwargs in run() to the exploration function
-
-        :param num_cpus: Number of desired CPU cores passed to ray for this run, defaults to None
-        :type num_cpus: int, optional
-        :param num_gpus: Number of desired GPUs passed to ray for this run, defaults to None
-        :type num_gpus: int, optional
         """
         # Initialize ray
-        self._init_ray(num_cpus=num_cpus, num_gpus=num_gpus)
+        self._init_ray(num_cpus=self.num_cpus, num_gpus=self.num_gpus)
 
         # Create a list of all combinations of parameters from explore_params
         self.explore_params_list = self._cartesian_product_dict(self.explore_params)
