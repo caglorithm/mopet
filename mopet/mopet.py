@@ -81,13 +81,18 @@ class Exploration:
         # Will be filled when calling `load_results`.
         self.params = {}
 
-    def run(self):
+    def run(self, num_cpus: int = None, num_gpus: int = None):
         """Start parameter exploration.
 
         TODO: Pass kwargs in run() to the exploration function
+
+        :param num_cpus: Number of desired CPU cores passed to ray for this run, defaults to None
+        :type num_cpus: int, optional
+        :param num_gpus: Number of desired GPUs passed to ray for this run, defaults to None
+        :type num_gpus: int, optional
         """
         # Initialize ray
-        self._init_ray()
+        self._init_ray(num_cpus=num_cpus, num_gpus=num_gpus)
 
         # Create a list of all combinations of parameters from explore_params
         self.explore_params_list = self._cartesian_product_dict(self.explore_params)
@@ -268,13 +273,18 @@ class Exploration:
         r = self.function(params)
         return r
 
-    def _init_ray(self):
+    def _init_ray(self, num_cpus: int = None, num_gpus: int = None):
         """Initialize ray.
+
+        :param num_cpus: Number of desired CPU cores used for this run, defaults to None
+        :type num_cpus: int, optional
+        :param num_gpus: Number of desired GPUs used for this run, defaults to None
+        :type num_gpus: int, optional
         """
         if ray.is_initialized():
             self._shutdown_ray()
 
-        ray.init()
+        ray.init(num_cpus=num_cpus, num_gpus=num_gpus)
         assert ray.is_initialized() is True, "Could not initialize ray."
 
     def _shutdown_ray(self):
