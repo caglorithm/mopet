@@ -26,6 +26,8 @@ class Exploration:
         default_params=None,
         exploration_name=None,
         hdf_filename=None,
+        num_cpus: int = None,
+        num_gpus: int = None,
     ):
         """Defines a parameter exploration of a given `function`.
         
@@ -39,6 +41,10 @@ class Exploration:
         :type exploration_name: str, optional
         :param hdf_filename: Filename of the hdf storage file, defaults to None
         :type hdf_filename: str, optional
+        :param num_cpus: Number of desired CPU cores passed to ray, defaults to None
+        :type num_cpus: int, optional
+        :param num_gpus: Number of desired GPUs passed to ray, defaults to None
+        :type num_gpus: int, optional
         :return: Exploration instance
         """
 
@@ -70,13 +76,28 @@ class Exploration:
         # status
         self._hdf_open_for_reading = False
 
+        # List of all parameter combinations generated when exploration starts
+        self.explore_params_list = None
+
+        # Dict with runId as keys and explored parameter dict as value.
+        # Will be filled when exploration starts.
+        self.run_params_dict = {}
+
+        # Dict with runId as keys and explored parameter dict as value.
+        # Will be filled when calling `load_results`.
+        self.params = {}
+
+        # Ray configuration
+        self.num_gpus = num_gpus
+        self.num_cpus = num_cpus
+
     def run(self):
         """Start parameter exploration.
 
         TODO: Pass kwargs in run() to the exploration function
         """
         # Initialize ray
-        self._init_ray()
+        self._init_ray(num_cpus=self.num_cpus, num_gpus=self.num_gpus)
 
         # Create a list of all combinations of parameters from explore_params
         self.explore_params_list = self._cartesian_product_dict(self.explore_params)
@@ -151,10 +172,10 @@ class Exploration:
     ):
         """Load results from previous explorations. This function 
         will open an HDF file and look for an exploration. It will 
-        create a Pandas `Dataframe` object (accessible thorugh the 
-        attribute `.df`) with a list of all runs and their paramters. 
+        create a Pandas `Dataframe` object (accessible through the
+        attribute `.df`) with a list of all runs and their parameters.
         
-        You can load the exploration results using following paramters:
+        You can load the exploration results using following parameters:
 
         - If `aggregate==True`, all scalar results (such as `float` 
         or `int`) from the exploration will be added to the Dataframe.
@@ -195,14 +216,14 @@ class Exploration:
         Note: This function will open the HDF for reading but will not close
         it afterwards! This is to speed up many sequential loads but it also
         means that you have to close the HDF file yourself. You can do this
-        by uysing `.close_hdf()`.
+        by using `.close_hdf()`.
 
         :param run_id: Unique id of the run. Has to be given if run_name is not given, defaults to None
         :type run_id: int, optional
         :param run_name: The name of the run. Has to be given if run_id is not given, defaults to None
         :type run_name: str, optional
-        :param exploration_name: Filename of the HDF with previous exploration results. Previously used filename will be used if not given, defaults to None
-        :type exploration_name: str, optional
+        :param filename: Filename of the HDF with previous exploration results. Previously used filename will be used if not given, defaults to None
+        :type filename: str, optional
         :param exploration_name: Name of the exploration to load data from. Previously used exploration_name will be used if not given, defaults to None
         :type exploration_name: str, optional
         
@@ -257,20 +278,25 @@ class Exploration:
         r = self.function(params)
         return r
 
-    def _init_ray(self):
+    def _init_ray(self, num_cpus: int = None, num_gpus: int = None):
         """Initialize ray.
+
+        :param num_cpus: Number of desired CPU cores used for this run, defaults to None
+        :type num_cpus: int, optional
+        :param num_gpus: Number of desired GPUs used for this run, defaults to None
+        :type num_gpus: int, optional
         """
         if ray.is_initialized():
             self._shutdown_ray()
 
-        ray.init()
-        assert ray.is_initialized() == True, "Could not initialize ray."
+        ray.init(num_cpus=num_cpus, num_gpus=num_gpus)
+        assert ray.is_initialized() is True, "Could not initialize ray."
 
     def _shutdown_ray(self):
         """Shutdown ray.
         """
         ray.shutdown()
-        assert ray.is_initialized() == False, "Could not shutdown ray."
+        assert ray.is_initialized() is False, "Could not shutdown ray."
 
     ##############################################
     ## DATA STORAGE
