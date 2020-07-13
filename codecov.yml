@@ -2,4 +2,10 @@ coverage:
   precision: 2
   round: nearest
   range: "90...100"
-  threshold: 3%
+  status:
+    project:
+      default:
+        enabled: yes
+        target: auto
+        threshold: 5%
+    patch: off  
