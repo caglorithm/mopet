@@ -131,9 +131,7 @@ class Exploration:
 
             # start all ray jobs and remember the ray object
             # pylint: disable=no-member
-            # TODO: have to replace self by Class object that has self.function and ray.remote decorator.
-            #   otherwise we cannot initialize storage before starting ray jobs. RayJob instance and open files need to be separated.
-            ray_returns[run_id] = self._ray_remote.remote(self, run_params)
+            ray_returns[run_id] = _ray_remote.remote(self.function, run_params)
 
             # store this runs explore parameters
             self.run_params_dict[run_id] = copy.deepcopy(update_params)
@@ -281,17 +279,6 @@ class Exploration:
     ##############################################
     ## MULTIPROCESSING
     ##############################################
-
-    @ray.remote
-    def _ray_remote(self, params):
-        """This is a ray remote function (see ray documentation). It runs the `function` on each ray worker.
-        
-        :param params: Parameters of the run.
-        :type params: dict
-        :return: ray object
-        """
-        r = self.function(params)
-        return r
 
     def _init_ray(self, num_cpus: int = None, num_gpus: int = None):
         """Initialize ray.
@@ -595,3 +582,17 @@ class Exploration:
                 return self.dfResults
         else:
             return self._create_df()
+
+
+@ray.remote
+def _ray_remote(function, params):
+    """ This is a ray remote function (see ray documentation). It runs the `function` on each ray worker.
+
+    :param function: function to be executed remotely.
+    :type function: callable
+    :param params: Parameters of the run.
+    :type params: dict
+    :return: ray object
+    """
+    r = function(params)
+    return r
