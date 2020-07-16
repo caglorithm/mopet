@@ -9,8 +9,7 @@ from tables import NodeError
 
 
 class TestExploration(unittest.TestCase):
-    """ Test various exploration cases.
-    """
+    """ Test various exploration cases. """
 
     def tearDown(self) -> None:
         """ Clean up files created during tests. """
@@ -39,7 +38,6 @@ class TestExploration(unittest.TestCase):
         ex.df
 
     def test_hdf_file_not_exists(self):
-        # TODO: clean up existing hdf5 file possibly created by other tests.
         def run(params):
             return {"my_list": [1, 2, 3]}
 
