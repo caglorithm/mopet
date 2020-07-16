@@ -131,6 +131,8 @@ class Exploration:
 
             # start all ray jobs and remember the ray object
             # pylint: disable=no-member
+            # TODO: have to replace self by Class object that has self.function and ray.remote decorator.
+            #   otherwise we cannot initialize storage before starting ray jobs. RayJob instance and open files need to be separated.
             ray_returns[run_id] = self._ray_remote.remote(self, run_params)
 
             # store this runs explore parameters
