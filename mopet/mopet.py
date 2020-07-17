@@ -204,6 +204,7 @@ class Exploration:
         :type aggregate: bool, optional
         :param all: Load all results into a dictionary available as the attribute `.results`. Can use a lot of RAM, defaults to False
         :type all: bool, optional
+        :raises Hdf5FileNotExistsError: if file with `filename` does not exist.
         """
         if exploration_name is None:
             exploration_name = self.exploration_name
