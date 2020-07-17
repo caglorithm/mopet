@@ -110,6 +110,9 @@ class Exploration:
         # Create a list of all combinations of parameters from explore_params
         self.explore_params_list = self._cartesian_product_dict(self.explore_params)
 
+        # Initialize hdf storage
+        self._pre_storage_routine()
+
         # -----------------------------
         # Set up all simulations
         # -----------------------------
@@ -152,9 +155,6 @@ class Exploration:
         # -----------------------------
         # Reduce and store all results
         # -----------------------------
-
-        # initialize hdf storage
-        self._pre_storage_routine()
 
         # remember the time
         start_time = time.time()
