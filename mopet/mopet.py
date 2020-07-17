@@ -10,9 +10,15 @@ import datetime
 import logging
 import time
 
+from tables import NoSuchNodeError, NodeError
+from mopet.exceptions import (
+    ExplorationNotFoundError,
+    Hdf5FileNotExistsError,
+    ExplorationExistsError,
+)
+
 
 class Exploration:
-
     RUN_PREFIX = "run_"
 
     ##############################################
@@ -95,12 +101,17 @@ class Exploration:
         """Start parameter exploration.
 
         TODO: Pass kwargs in run() to the exploration function
+
+        :raises ExplorationExistsError: if exploration with same name already exists in HDF5 file.
         """
         # Initialize ray
         self._init_ray(num_cpus=self.num_cpus, num_gpus=self.num_gpus)
 
         # Create a list of all combinations of parameters from explore_params
         self.explore_params_list = self._cartesian_product_dict(self.explore_params)
+
+        # Initialize hdf storage
+        self._pre_storage_routine()
 
         # -----------------------------
         # Set up all simulations
@@ -129,7 +140,7 @@ class Exploration:
 
             # start all ray jobs and remember the ray object
             # pylint: disable=no-member
-            ray_returns[run_id] = self._ray_remote.remote(self, run_params)
+            ray_returns[run_id] = _ray_remote.remote(self.function, run_params)
 
             # store this runs explore parameters
             self.run_params_dict[run_id] = copy.deepcopy(update_params)
@@ -144,9 +155,6 @@ class Exploration:
         # -----------------------------
         # Reduce and store all results
         # -----------------------------
-
-        # initialize hdf storage
-        self._pre_storage_routine()
 
         # remember the time
         start_time = time.time()
@@ -196,6 +204,7 @@ class Exploration:
         :type aggregate: bool, optional
         :param all: Load all results into a dictionary available as the attribute `.results`. Can use a lot of RAM, defaults to False
         :type all: bool, optional
+        :raises Hdf5FileNotExistsError: if file with `filename` does not exist.
         """
         if exploration_name is None:
             exploration_name = self.exploration_name
@@ -231,6 +240,7 @@ class Exploration:
         
         :return: Results of the run
         :rtype: dict
+        :raises: NoSuchExplorationError if hdf5 file does not contain `exploration_name` group.
         """
         # get result by id or if not then by run_name (hdf_run)
         assert (
@@ -245,9 +255,17 @@ class Exploration:
 
         if not self._hdf_open_for_reading:
             self._open_hdf(filename)
-        run_results_group = self.h5file.get_node("/" + self.exploration_name, "runs")[
-            run_name
-        ]
+
+        try:
+            run_results_group = self.h5file.get_node(
+                "/" + self.exploration_name, "runs"
+            )[run_name]
+        except NoSuchNodeError:
+            raise ExplorationNotFoundError(
+                "Exploration %s could not be found in HDF file %s".format(
+                    self.exploration_name, self.hdf_filename
+                )
+            )
 
         result = self._read_group_as_dict(run_results_group)
         return result
@@ -268,17 +286,6 @@ class Exploration:
     ##############################################
     ## MULTIPROCESSING
     ##############################################
-
-    @ray.remote
-    def _ray_remote(self, params):
-        """This is a ray remote function (see ray documentation). It runs the `function` on each ray worker.
-        
-        :param params: Parameters of the run.
-        :type params: dict
-        :return: ray object
-        """
-        r = self.function(params)
-        return r
 
     def _init_ray(self, num_cpus: int = None, num_gpus: int = None):
         """Initialize ray.
@@ -322,9 +329,24 @@ class Exploration:
 
     def _init_hdf(self):
         """Create hdf storage file and all necessary groups.
+
+        :raises Hdf5FileNotExistsError, ExplorationAlreadyExists
         """
-        self.h5file = tables.open_file(self.hdf_filename, mode="a")
-        self.run_group = self.h5file.create_group("/", self.exploration_name)
+        try:
+            self.h5file = tables.open_file(self.hdf_filename, mode="a")
+        except IOError:
+            raise Hdf5FileNotExistsError(
+                "Hdf5 file {} does not exist".format(self.hdf_filename)
+            )
+
+        try:
+            self.run_group = self.h5file.create_group("/", self.exploration_name)
+        except NodeError as e:
+            raise ExplorationExistsError(
+                "Exploration with name {} already exists in HDF5 file {}".format(
+                    self.exploration_name, self.hdf_filename
+                )
+            )
 
         # create group in which all data from runs will be saved
         self.runs_group = self.h5file.create_group(
@@ -426,6 +448,7 @@ class Exploration:
 
         :param filename: Filename of HDF file, defaults to None
         :type filename: str, optional
+        :raises Hdf5FileNotExistsError
         """
         if filename is not None:
             self.hdf_filename = filename
@@ -433,7 +456,13 @@ class Exploration:
             self.hdf_filename is not None
         ), "No hdf filename was given or previously set."
 
-        self.h5file = tables.open_file(self.hdf_filename, mode="r+")
+        try:
+            self.h5file = tables.open_file(self.hdf_filename, mode="r+")
+        except OSError:
+            raise Hdf5FileNotExistsError(
+                "Hdf5 file %s does not exist".format(self.hdf_filename)
+            )
+
         self._hdf_open_for_reading = True
         logging.info(f"{self.hdf_filename} opened for reading.")
 
@@ -474,6 +503,7 @@ class Exploration:
         :type exploration_name: str, optional
         :param all: Whether to load everything into ram or not, defaults to True
         :type all: bool, optional
+        :raises Hdf5FileNotExistsError, ExplorationNotFoundError
         """
         if exploration_name is None:
             exploration_name = self.exploration_name
@@ -566,3 +596,17 @@ class Exploration:
                 return self.dfResults
         else:
             return self._create_df()
+
+
+@ray.remote
+def _ray_remote(function, params):
+    """ This is a ray remote function (see ray documentation). It runs the `function` on each ray worker.
+
+    :param function: function to be executed remotely.
+    :type function: callable
+    :param params: Parameters of the run.
+    :type params: dict
+    :return: ray object
+    """
+    r = function(params)
+    return r
