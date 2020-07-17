@@ -10,8 +10,12 @@ import datetime
 import logging
 import time
 
-from tables import NoSuchNodeError
-from mopet.exceptions import ExplorationNotFoundError, Hdf5FileNotExistsError
+from tables import NoSuchNodeError, NodeError
+from mopet.exceptions import (
+    ExplorationNotFoundError,
+    Hdf5FileNotExistsError,
+    ExplorationExistsError,
+)
 
 
 class Exploration:
@@ -97,6 +101,8 @@ class Exploration:
         """Start parameter exploration.
 
         TODO: Pass kwargs in run() to the exploration function
+
+        :raises ExplorationExistsError: if exploration with same name already exists in HDF5 file.
         """
         # Initialize ray
         self._init_ray(num_cpus=self.num_cpus, num_gpus=self.num_gpus)
@@ -323,16 +329,23 @@ class Exploration:
     def _init_hdf(self):
         """Create hdf storage file and all necessary groups.
 
-        :raises Hdf5FileNotExistsError
+        :raises Hdf5FileNotExistsError, ExplorationAlreadyExists
         """
         try:
             self.h5file = tables.open_file(self.hdf_filename, mode="a")
         except IOError:
             raise Hdf5FileNotExistsError(
-                "Hdf5 file %s does not exist".format(self.hdf_filename)
+                "Hdf5 file {} does not exist".format(self.hdf_filename)
             )
 
-        self.run_group = self.h5file.create_group("/", self.exploration_name)
+        try:
+            self.run_group = self.h5file.create_group("/", self.exploration_name)
+        except NodeError as e:
+            raise ExplorationExistsError(
+                "Exploration with name {} already exists in HDF5 file {}".format(
+                    self.exploration_name, self.hdf_filename
+                )
+            )
 
         # create group in which all data from runs will be saved
         self.runs_group = self.h5file.create_group(

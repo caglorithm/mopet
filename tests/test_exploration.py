@@ -4,8 +4,7 @@ import numpy as np
 import glob
 import os
 
-from mopet.exceptions import Hdf5FileNotExistsError
-from tables import NodeError
+from mopet.exceptions import Hdf5FileNotExistsError, ExplorationExistsError
 
 
 class TestExploration(unittest.TestCase):
@@ -63,5 +62,4 @@ class TestExploration(unittest.TestCase):
         ex.load_results(all=True)
 
         # Run again, but exploration already exists -> will throw exception.
-        # TODO: Replace with custom exception.
-        self.assertRaises(NodeError, ex.run)
+        self.assertRaises(ExplorationExistsError, ex.run)
