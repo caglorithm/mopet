@@ -547,11 +547,10 @@ class Exploration:
         for array in group:
             if isinstance(array, tables.array.Array):
                 value = array.read()
-                if not isinstance(value, np.ndarray):
-                    value = np.array(value)
-                # convert 0-dim arrays to floats
-                if value.ndim == 0:
-                    value = np.float(value)
+                # unwrap 0-dim arrays
+                if type(value) is np.ndarray and value.ndim == 0:
+                    value = array.dtype.type(value)
+
                 key = array._v_name
                 return_dict[key] = value
         return return_dict
