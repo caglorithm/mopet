@@ -63,3 +63,46 @@ class TestExploration(unittest.TestCase):
 
         # Run again, but exploration already exists -> will throw exception.
         self.assertRaises(ExplorationExistsError, ex.run)
+
+    def test_exploration_with_supported_types(self):
+        """
+        Tests if stored result dict containing all supported data types is loaded expected.
+
+        Supported objects are:
+            * NumPy array
+            * Record or scalar
+            * Homogeneous list or tuple
+            * Integer, float, complex or bytes
+
+        This is determined by supported types of array in pytables.
+
+        See here for supported data types in PyTables (https://www.pytables.org/usersguide/datatypes.html).
+
+        """
+        result_dict = {
+            "bool_true": True,
+            "bool_false": False,
+            "bool_array": [True, False],
+            "int": np.int(1),
+            "float": 42.0,
+            "float_array": [1.0, 2.0],
+            "complex": 4 + 3j,
+            "tuple": (1, 2),
+            "bytes": b"\x04",
+        }
+
+        def run(params):
+            return result_dict
+
+        ex = mopet.Exploration(run, {"a": np.arange(0, 1, 0.5)})
+        ex.run()
+        ex.load_results(all=True)
+
+        print(ex.df)
+
+        for key, result in ex.results.items():
+            expected_result = dict(result_dict)
+
+            # tuple is transformed to array by PyTables
+            expected_result["tuple"] = [1, 2]
+            self.assertDictEqual(result, expected_result)
