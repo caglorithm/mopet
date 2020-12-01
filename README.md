@@ -90,7 +90,7 @@ You can load the exploration results using
 ex.load_results(all=True)
 ``` 
 
-Note that using `all=True` will load all results into memory. Please make sure that you have enough free memory for this. If not, do not use `all=True` but load individual results using their `run_id` (which is an integer counting up one per run):
+Note that using `all=True` will load all results into memory (as opposed to just the parameters of each run). Please make sure that you have enough free memory for this since your simulation results could be huge. If you do not want this, you can load individual results using their `run_id` (which is an integer counting up one per run):
 
 ```python
 ex.get_run(run_id=0)
@@ -112,7 +112,6 @@ Let's plot the results!
 ```python
 
 import matplotlib.pyplot as plt
-# a nice color map
 plt.imshow(pivoted, \
            extent = [min(ex.df.x), max(ex.df.x),
                      min(ex.df.y), max(ex.df.y)], origin='lower')
