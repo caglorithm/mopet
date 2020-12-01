@@ -21,9 +21,7 @@ class TestExploration(unittest.TestCase):
     def test_exploration(self):
         def eval_function(params):
             result_float = abs((params["x"] ** 2 + params["y"] ** 2) - 1)
-            result_array = np.random.randn(
-                np.random.randint(1, 131), np.random.randint(1, 5000)
-            )
+            result_array = np.random.randn(np.random.randint(1, 131), np.random.randint(1, 5000))
             result = {"float_result": result_float, "array_result": result_array}
             return result
 
@@ -34,7 +32,9 @@ class TestExploration(unittest.TestCase):
 
         ex.run()
         ex.load_results(all=True)
-        ex.df
+        # check if results are in the dataframe
+        self.assertIn("array_result", ex.df)
+        self.assertIn("float_result", ex.df)
 
     def test_hdf_file_not_exists(self):
         def run(params):
@@ -48,16 +48,14 @@ class TestExploration(unittest.TestCase):
         self.assertRaises(Hdf5FileNotExistsError, ex.load_results)
 
     def test_exploration_with_name_exists(self):
-        """ Test if exception is thrown for second run of exploration with fixed name.
+        """Test if exception is thrown for second run of exploration with fixed name.
 
         Exceptions protects against accidental override of results.
         """
         explore_params = {"x": np.linspace(-2, 2, 2), "y": np.linspace(-2, 2, 2)}
 
         # Initialize, run and load.
-        ex = mopet.Exploration(
-            lambda params: {}, explore_params, exploration_name="test"
-        )
+        ex = mopet.Exploration(lambda params: {}, explore_params, exploration_name="test")
         ex.run()
         ex.load_results(all=True)
 
