@@ -19,19 +19,21 @@
   
 </p>
 
-
 # mopet 🛵
-*The mildly ominous parameter exploration toolkit*
 
-Isn't it strange that, although parameter explorations are a crucial part of computational modeling, there are almost no Python tools available for making your life easier? 
-`mopet` is here to help! You can run extensive grid searches in parallel (powered by `ray`) and store extremely huge amounts of data into a HDF file (powered by `pytables`) for later analysis - or whatever your excuse is for buying yet another hard disk. 
+_The mildly ominous parameter exploration toolkit_
+
+Isn't it strange that, although parameter explorations are a crucial part of computational modeling, there are almost no Python tools available for making your life easier?
+`mopet` is here to help! You can run extensive grid searches in parallel (powered by `ray`) and store extremely huge amounts of data into a HDF file (powered by `pytables`) for later analysis - or whatever your excuse is for buying yet another hard disk.
 
 # Installation 💻
+
 The easiest way to get going is to install the pypi package using `pip`:
 
 ```
 pip install mopet
 ```
+
 Alternatively, you can also clone this repository and install all dependencies with
 
 ```
@@ -42,20 +44,21 @@ pip install .
 ```
 
 # Example usage 🐝
+
 Feel free to have a look at the [Documentation page](https://caglorithm.github.io/mopet/). Setting up an exploration is as easy as can be!
 
 ```python
 # first we define an toy evaluation function
 def distance_from_circle(params):
-	# let's simply calculate the distance of 
+	# let's simply calculate the distance of
 	# the x-y parameters to the unit circle
-	distance = abs((params["x"] ** 2 + params["y"] ** 2) - 
-	
+	distance = abs((params["x"] ** 2 + params["y"] ** 2) -
+
 	# we package the result into a dictionary
 	result = {"result" : distance}
 	return result
 
-``` 
+```
 
 Let's set up the exploration by defining the parameters to explore and passing the evaluation function from above:
 
@@ -80,21 +83,21 @@ After your exploration has finished, you will find a file `exploration.h5` in yo
   	<img alt="Build" src="resources/hdf_file.jpg">
 </p>
   
-  
+
 
 ## Loading exploration results
 
-You can load the exploration results using 
+You can load the exploration results using
 
 ```python
-ex.load_results(all=True)
-``` 
+ex.load_results(arrays=True)
+```
 
-Note that using `all=True` will load all results into memory (as opposed to just the parameters of each run). Please make sure that you have enough free memory for this since your simulation results could be huge. If you do not want this, you can load individual results using their `run_id` (which is an integer counting up one per run):
+Note that using `arrays=True` will load all results into memory (as opposed to just the parameters of each run). Please make sure that you have enough free memory for this since your simulation results could be huge. If you do not want this, you can load individual results using their `run_id` (which is an integer counting up one per run):
 
 ```python
 ex.get_run(run_id=0)
-``` 
+```
 
 After using `ex.load_results()`, an overview of all runs and their parameters is given as a `pandas` DataFrame, available as `ex.df`. Using `ex.load_results()` with the default parameters will automatically aggregate all scalar results into this table, like `distance` in our example above, which is a float.
 
@@ -103,6 +106,7 @@ Using some fancy pivoting, we can create a 2D matrix with the results as entries
 ```python
 pivoted = ex.df.pivot_table(values='result', index = 'y', columns='x', aggfunc='first')
 ```
+
 <p align="center">
   <img src="https://github.com/caglorithm/mopet/raw/master/resources/pandas_pivot_table.png", width="480">
 </p>
@@ -128,14 +132,14 @@ plt.ylabel("y")
 
 ### Inspired by 🤔
 
-`mopet` is inspired by [`pypet`](https://github.com/SmokinCaterpillar/pypet), a wonderful python parameter exploration toolkit. I have been using `pypet` for a very long time and I'm greatful for its existence! Unfortunately, the project is not maintained anymore and has run into several compatibility issues, which was the primary reason why I built `mopet`. 
+`mopet` is inspired by [`pypet`](https://github.com/SmokinCaterpillar/pypet), a wonderful python parameter exploration toolkit. I have been using `pypet` for a very long time and I'm greatful for its existence! Unfortunately, the project is not maintained anymore and has run into several compatibility issues, which was the primary reason why I built `mopet`.
 
 ### Built With 💞
 
 `mopet` is built on other amazing open source projects:
 
-* [`ray`](https://github.com/ray-project/ray) - A fast and simple framework for building and running distributed applications.
-* [`pytables`](https://github.com/PyTables/PyTables) - A Python package to manage extremely large amounts of data.
-* [`tqdm`](https://github.com/tqdm/tqdm) - A Fast, Extensible Progress Bar for Python and CLI
-* [`pandas`](https://github.com/pandas-dev/pandas) - Flexible and powerful data analysis / manipulation library for Python
-* [`numpy`](https://github.com/numpy/numpy) - The fundamental package for scientific computing with Python
+- [`ray`](https://github.com/ray-project/ray) - A fast and simple framework for building and running distributed applications.
+- [`pytables`](https://github.com/PyTables/PyTables) - A Python package to manage extremely large amounts of data.
+- [`tqdm`](https://github.com/tqdm/tqdm) - A Fast, Extensible Progress Bar for Python and CLI
+- [`pandas`](https://github.com/pandas-dev/pandas) - Flexible and powerful data analysis / manipulation library for Python
+- [`numpy`](https://github.com/numpy/numpy) - The fundamental package for scientific computing with Python
