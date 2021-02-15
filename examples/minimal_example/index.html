@@ -63,6 +63,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#a-very-basic-exploration" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -256,6 +261,8 @@
       
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
       
+        
+      
       
       <a href="./" class="md-nav__link md-nav__link--active">
         Minimal example
@@ -302,6 +309,22 @@
               </div>
             
             
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           <div class="md-content">
             <article class="md-content__inner md-typeset">
@@ -311,8 +334,6 @@
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
-                
-                  <h1>Minimal example</h1>
                 
                 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -348,6 +369,20 @@
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="a-very-basic-exploration">A very basic exploration</h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In this example, we will perform a basic exploration with <code>mopet</code>. To demonstrate the usage, we will simply scan a 2D surface and, at each point, return a number that is equal to the distance to a unit circle. Of course, this is not a realistic experiment for parameter exploration but it serves as a simplified example.</p>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -377,8 +412,6 @@
 <span class="c1"># a nice color map</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;image.cmap&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;plasma&#39;</span>
 
-<span class="err">!</span><span class="n">rm</span> <span class="n">exploration</span><span class="o">.</span><span class="n">h5</span>
-
 <span class="k">def</span> <span class="nf">evalFunction</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
     <span class="n">result_float</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">((</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">result_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">131</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5000</span><span class="p">))</span>
@@ -389,28 +422,11 @@
 
 <span class="n">explore_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">21</span><span class="p">),</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">21</span><span class="p">)}</span>
 
-<span class="n">ex</span> <span class="o">=</span> <span class="n">mopet</span><span class="o">.</span><span class="n">Exploration</span><span class="p">(</span><span class="n">evalFunction</span><span class="p">,</span> <span class="n">explore_params</span><span class="p">)</span>
+<span class="c1"># we need this random filename to avoid testing clashes</span>
+<span class="n">hdf_filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;exploration-</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">99999</span><span class="p">)</span><span class="si">}</span><span class="s2">.h5&quot;</span>
+<span class="n">ex</span> <span class="o">=</span> <span class="n">mopet</span><span class="o">.</span><span class="n">Exploration</span><span class="p">(</span><span class="n">evalFunction</span><span class="p">,</span> <span class="n">explore_params</span><span class="p">,</span> <span class="n">hdf_filename</span><span class="o">=</span><span class="n">hdf_filename</span><span class="p">)</span>
 </code></pre></div>
 
-</div>
-<div class="output_wrapper">
-<div class="output">
-<div class="output_area">
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-<code>Requirement already satisfied: matplotlib in /Users/caglar/anaconda/lib/python3.7/site-packages (3.1.3)
-Requirement already satisfied: python-dateutil&gt;=2.1 in /Users/caglar/anaconda/lib/python3.7/site-packages (from matplotlib) (2.8.0)
-Requirement already satisfied: cycler&gt;=0.10 in /Users/caglar/anaconda/lib/python3.7/site-packages (from matplotlib) (0.10.0)
-Requirement already satisfied: numpy&gt;=1.11 in /Users/caglar/anaconda/lib/python3.7/site-packages (from matplotlib) (1.18.1)
-Requirement already satisfied: kiwisolver&gt;=1.0.1 in /Users/caglar/anaconda/lib/python3.7/site-packages (from matplotlib) (1.1.0)
-Requirement already satisfied: pyparsing!=2.0.4,!=2.1.2,!=2.1.6,&gt;=2.0.1 in /Users/caglar/anaconda/lib/python3.7/site-packages (from matplotlib) (2.4.0)
-Requirement already satisfied: six&gt;=1.5 in /Users/caglar/anaconda/lib/python3.7/site-packages (from python-dateutil&gt;=2.1-&gt;matplotlib) (1.13.0)
-Requirement already satisfied: setuptools in /Users/caglar/anaconda/lib/python3.7/site-packages (from kiwisolver&gt;=1.0.1-&gt;matplotlib) (45.1.0)
-</code>
-</pre>
-</div>
-</div>
-</div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
@@ -425,13 +441,13 @@ Requirement already satisfied: setuptools in /Users/caglar/anaconda/lib/python3.
 <div class="output_area">
 <div class="output_subarea output_stream output_stderr output_text">
 <pre>
-<code>2020-04-20 21:46:37,480   INFO resource_spec.py:212 -- Starting Ray with 3.27 GiB memory available for workers and up to 1.64 GiB for objects. You can adjust these settings with ray.init(memory=&lt;bytes&gt;, object_store_memory=&lt;bytes&gt;).
-2020-04-20 21:46:37,952 INFO services.py:1093 -- View the Ray dashboard at <span class="ansi-green-intense-fg ansi-bold">localhost:8265</span>
+<code>2021-02-15 13:58:23,782   INFO resource_spec.py:212 -- Starting Ray with 3.91 GiB memory available for workers and up to 1.96 GiB for objects. You can adjust these settings with ray.init(memory=&lt;bytes&gt;, object_store_memory=&lt;bytes&gt;).
+2021-02-15 13:58:24,138 INFO services.py:1093 -- View the Ray dashboard at <span class="ansi-green-intense-fg ansi-bold">localhost:8265</span>
 INFO:root:Starting 441 jobs.
-100%|██████████| 441/441 [00:03&lt;00:00, 118.57it/s]
-INFO:root:Runs took 3.727734088897705 s to submit.
-100%|██████████| 441/441 [00:01&lt;00:00, 224.70it/s]
-INFO:root:Runs and storage took 1.9686880111694336 s to complete.
+100%|██████████| 441/441 [00:00&lt;00:00, 457.14it/s]
+INFO:root:Runs took 0.9735679626464844 s to submit.
+100%|██████████| 441/441 [00:03&lt;00:00, 118.17it/s]
+INFO:root:Runs and storage took 3.7421679496765137 s to complete.
 </code>
 </pre>
 </div>
@@ -442,7 +458,7 @@ INFO:root:Runs and storage took 1.9686880111694336 s to complete.
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
-<div class="highlight"><pre><span></span><code><span class="n">ex</span><span class="o">.</span><span class="n">load_results</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">ex</span><span class="o">.</span><span class="n">load_results</span><span class="p">(</span><span class="n">arrays</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </code></pre></div>
 
 </div>
@@ -451,13 +467,13 @@ INFO:root:Runs and storage took 1.9686880111694336 s to complete.
 <div class="output_area">
 <div class="output_subarea output_stream output_stderr output_text">
 <pre>
-<code>INFO:root:exploration.h5 opened for reading.
-INFO:root:Gettings runs of exploration ``exploration_2020_04_20_21H_46M_37S``
-100%|██████████| 441/441 [00:01&lt;00:00, 379.44it/s]
+<code>INFO:root:exploration-55740.h5 opened for reading.
+INFO:root:Gettings runs of exploration ``exploration_2021_02_15_13H_58M_23S``
+100%|██████████| 441/441 [00:00&lt;00:00, 903.61it/s]
 INFO:root:Creating new results DataFrame
-INFO:root:Aggregating scalar results ...
-100%|██████████| 441/441 [00:00&lt;00:00, 502.89it/s]
-INFO:root:exploration.h5 closed.
+INFO:root:Aggregating all results ...
+100%|██████████| 441/441 [00:01&lt;00:00, 413.07it/s]
+INFO:root:exploration-55740.h5 closed.
 </code>
 </pre>
 </div>

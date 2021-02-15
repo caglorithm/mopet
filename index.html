@@ -356,13 +356,13 @@
 
 <h1 id="mopet">mopet 🛵</h1>
 <p><em>The mildly ominous parameter exploration toolkit</em></p>
-<p>Isn't it strange that, although parameter explorations are a crucial part of computational modeling, there are almost no Python tools available for making your life easier? 
-<code>mopet</code> is here to help! You can run extensive grid searches in parallel (powered by <code>ray</code>) and store extremely huge amounts of data into a HDF file (powered by <code>pytables</code>) for later analysis - or whatever your excuse is for buying yet another hard disk. </p>
+<p>Isn't it strange that, although parameter explorations are a crucial part of computational modeling, there are almost no Python tools available for making your life easier?
+<code>mopet</code> is here to help! You can run extensive grid searches in parallel (powered by <code>ray</code>) and store extremely huge amounts of data into a HDF file (powered by <code>pytables</code>) for later analysis - or whatever your excuse is for buying yet another hard disk.</p>
 <h1 id="installation">Installation 💻</h1>
 <p>The easiest way to get going is to install the pypi package using <code>pip</code>:</p>
-<p><div class="highlight"><pre><span></span><code>pip install mopet
+<div class="highlight"><pre><span></span><code>pip install mopet
 </code></pre></div>
-Alternatively, you can also clone this repository and install all dependencies with</p>
+<p>Alternatively, you can also clone this repository and install all dependencies with</p>
 <div class="highlight"><pre><span></span><code>git clone https://github.com/caglorithm/mopet.git
 cd mopet/
 pip install -r requirements.txt
@@ -372,9 +372,9 @@ pip install .
 <p>Feel free to have a look at the <a href="https://caglorithm.github.io/mopet/">Documentation page</a>. Setting up an exploration is as easy as can be!</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># first we define an toy evaluation function</span>
 <span class="k">def</span> <span class="nf">distance_from_circle</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
-    <span class="c1"># let&#39;s simply calculate the distance of </span>
+    <span class="c1"># let&#39;s simply calculate the distance of</span>
     <span class="c1"># the x-y parameters to the unit circle</span>
-    <span class="n">distance</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">((</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> 
+    <span class="n">distance</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">((</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span>
 
     <span class="c1"># we package the result into a dictionary</span>
     <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;result&quot;</span> <span class="p">:</span> <span class="n">distance</span><span class="p">}</span>
@@ -397,10 +397,10 @@ pip install .
 </p>
 
 <h2 id="loading-exploration-results">Loading exploration results</h2>
-<p>You can load the exploration results using </p>
-<div class="highlight"><pre><span></span><code><span class="n">ex</span><span class="o">.</span><span class="n">load_results</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<p>You can load the exploration results using</p>
+<div class="highlight"><pre><span></span><code><span class="n">ex</span><span class="o">.</span><span class="n">load_results</span><span class="p">(</span><span class="n">arrays</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </code></pre></div>
-<p>Note that using <code>all=True</code> will load all results into memory (as opposed to just the parameters of each run). Please make sure that you have enough free memory for this since your simulation results could be huge. If you do not want this, you can load individual results using their <code>run_id</code> (which is an integer counting up one per run):</p>
+<p>Note that using <code>arrays=True</code> will load all results into memory (as opposed to just the parameters of each run). Please make sure that you have enough free memory for this since your simulation results could be huge. If you do not want this, you can load individual results using their <code>run_id</code> (which is an integer counting up one per run):</p>
 <div class="highlight"><pre><span></span><code><span class="n">ex</span><span class="o">.</span><span class="n">get_run</span><span class="p">(</span><span class="n">run_id</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 </code></pre></div>
 <p>After using <code>ex.load_results()</code>, an overview of all runs and their parameters is given as a <code>pandas</code> DataFrame, available as <code>ex.df</code>. Using <code>ex.load_results()</code> with the default parameters will automatically aggregate all scalar results into this table, like <code>distance</code> in our example above, which is a float.</p>
@@ -426,7 +426,7 @@ pip install .
 
 <h2 id="more-information">More information 📓</h2>
 <h3 id="inspired-by">Inspired by 🤔</h3>
-<p><code>mopet</code> is inspired by <a href="https://github.com/SmokinCaterpillar/pypet"><code>pypet</code></a>, a wonderful python parameter exploration toolkit. I have been using <code>pypet</code> for a very long time and I'm greatful for its existence! Unfortunately, the project is not maintained anymore and has run into several compatibility issues, which was the primary reason why I built <code>mopet</code>. </p>
+<p><code>mopet</code> is inspired by <a href="https://github.com/SmokinCaterpillar/pypet"><code>pypet</code></a>, a wonderful python parameter exploration toolkit. I have been using <code>pypet</code> for a very long time and I'm greatful for its existence! Unfortunately, the project is not maintained anymore and has run into several compatibility issues, which was the primary reason why I built <code>mopet</code>.</p>
 <h3 id="built-with">Built With 💞</h3>
 <p><code>mopet</code> is built on other amazing open source projects:</p>
 <ul>

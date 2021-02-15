@@ -743,7 +743,7 @@
 <p>Get a single result from a previous exploration. This function
 will load a single result from the HDF file. Use this function
 if you want to avoid loading all results to memory, which you can
-do using <code>.load_results(all=True)</code>.</p>
+do using <code>.load_results(arrays=True)</code>.</p>
 <p>Note: This function will open the HDF for reading but will not close
 it afterwards! This is to speed up many sequential loads but it also
 means that you have to close the HDF file yourself. You can do this
@@ -817,7 +817,7 @@ by using <code>.close_hdf()</code>.</p>
     <span class="sd">"""Get a single result from a previous exploration. This function</span>
 <span class="sd">    will load a single result from the HDF file. Use this function</span>
 <span class="sd">    if you want to avoid loading all results to memory, which you can</span>
-<span class="sd">    do using `.load_results(all=True)`.</span>
+<span class="sd">    do using `.load_results(arrays=True)`.</span>
 
 <span class="sd">    Note: This function will open the HDF for reading but will not close</span>
 <span class="sd">    it afterwards! This is to speed up many sequential loads but it also</span>
@@ -866,7 +866,7 @@ by using <code>.close_hdf()</code>.</p>
 <div class="doc doc-object doc-method">
 <h3 class="doc doc-heading" id="mopet.mopet.Exploration.load_results">
 
-<code class="highlight language-python"><span class="n">load_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exploration_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">aggregate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">all</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">load_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exploration_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">arrays</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">as_dict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
       </h3>
@@ -877,14 +877,16 @@ create a Pandas <code>Dataframe</code> object (accessible through the
 attribute <code>.df</code>) with a list of all runs and their parameters.</p>
 <p>You can load the exploration results using following parameters:</p>
 <ul>
-<li>If <code>aggregate==True</code>, all scalar results (such as <code>float</code>
-or <code>int</code>) from the exploration will be added to the Dataframe.</li>
-<li>If <code>all==True</code>, then all results, including arrays and other
-types, will be saved in the attribute <code>.results</code>. This can take
+<li>If <code>arrays==False</code>, all scalar results from the exploration
+will be added to the Dataframe (default).</li>
+<li>If <code>arrays==True</code>, then all results, including (larger) numpy arrays
+will be loaded. This can take
 up a lot of RAM since all results will be available. Only
 use this option if you know that you have enough memory. Otherwise,
 you might want to skip this and load results separately using the
 method <code>.get_run()</code>.</li>
+<li>If <code>as_dict==True</code>, all results will be loaded and saved to the attribute
+<code>.results</code> regardless of their type. Will use even more memory.</li>
 </ul>
 <p><strong>Parameters:</strong></p>
 <table>
@@ -914,15 +916,15 @@ method <code>.get_run()</code>.</li>
 <td><code>None</code></td>
 </tr>
 <tr>
-<td><code>aggregate</code></td>
+<td><code>arrays</code></td>
 <td><code>bool, optional</code></td>
 <td>
-<p>Aggregate scalar results into the results Dataframe. If this option is enabled, defaults to True</p>
+<p>Aggregate all results, including arrays into the results Dataframe, defaults to False</p>
 </td>
-<td><code>True</code></td>
+<td><code>False</code></td>
 </tr>
 <tr>
-<td><code>all</code></td>
+<td><code>as_dict</code></td>
 <td><code>bool, optional</code></td>
 <td>
 <p>Load all results into a dictionary available as the attribute <code>.results</code>. Can use a lot of RAM, defaults to False</p>
@@ -951,7 +953,7 @@ method <code>.get_run()</code>.</li>
 <details class="quote">
           <summary>Source code in <code>mopet/mopet.py</code></summary>
           <div class="highlight">
-<pre><span></span><code><span class="k">def</span> <span class="nf">load_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exploration_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">aggregate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">all</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<pre><span></span><code><span class="k">def</span> <span class="nf">load_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exploration_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">arrays</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">as_dict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">"""Load results from previous explorations. This function</span>
 <span class="sd">    will open an HDF file and look for an exploration. It will</span>
 <span class="sd">    create a Pandas `Dataframe` object (accessible through the</span>
@@ -959,23 +961,25 @@ method <code>.get_run()</code>.</li>
 
 <span class="sd">    You can load the exploration results using following parameters:</span>
 
-<span class="sd">    - If `aggregate==True`, all scalar results (such as `float`</span>
-<span class="sd">    or `int`) from the exploration will be added to the Dataframe.</span>
-<span class="sd">    - If `all==True`, then all results, including arrays and other</span>
-<span class="sd">    types, will be saved in the attribute `.results`. This can take</span>
+<span class="sd">    - If `arrays==False`, all scalar results from the exploration</span>
+<span class="sd">    will be added to the Dataframe (default).</span>
+<span class="sd">    - If `arrays==True`, then all results, including (larger) numpy arrays</span>
+<span class="sd">    will be loaded. This can take</span>
 <span class="sd">    up a lot of RAM since all results will be available. Only</span>
 <span class="sd">    use this option if you know that you have enough memory. Otherwise,</span>
 <span class="sd">    you might want to skip this and load results separately using the</span>
 <span class="sd">    method `.get_run()`.</span>
+<span class="sd">    - If `as_dict==True`, all results will be loaded and saved to the attribute</span>
+<span class="sd">    `.results` regardless of their type. Will use even more memory.</span>
 
 <span class="sd">    :param filename: Filename of HDF file, uses default filename or previously used filename if not given, defaults to None</span>
 <span class="sd">    :type filename: str, optional</span>
 <span class="sd">    :param exploration_name: Name of the exploration, same as the group names of the explorations in the HDF file, defaults to None</span>
 <span class="sd">    :type exploration_name: str, optional</span>
-<span class="sd">    :param aggregate: Aggregate scalar results into the results Dataframe. If this option is enabled, defaults to True</span>
-<span class="sd">    :type aggregate: bool, optional</span>
-<span class="sd">    :param all: Load all results into a dictionary available as the attribute `.results`. Can use a lot of RAM, defaults to False</span>
-<span class="sd">    :type all: bool, optional</span>
+<span class="sd">    :param arrays: Aggregate all results, including arrays into the results Dataframe, defaults to False</span>
+<span class="sd">    :type arrays: bool, optional</span>
+<span class="sd">    :param as_dict: Load all results into a dictionary available as the attribute `.results`. Can use a lot of RAM, defaults to False</span>
+<span class="sd">    :type as_dict: bool, optional</span>
 <span class="sd">    :raises Hdf5FileNotExistsError: if file with `filename` does not exist.</span>
 <span class="sd">    """</span>
     <span class="k">if</span> <span class="n">exploration_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -984,10 +988,9 @@ method <code>.get_run()</code>.</li>
         <span class="bp">self</span><span class="o">.</span><span class="n">exploration_name</span> <span class="o">=</span> <span class="n">exploration_name</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_open_hdf</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_load_all_results</span><span class="p">(</span><span class="n">exploration_name</span><span class="p">,</span> <span class="nb">all</span><span class="o">=</span><span class="nb">all</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_load_all_results</span><span class="p">(</span><span class="n">exploration_name</span><span class="p">,</span> <span class="n">as_dict</span><span class="o">=</span><span class="n">as_dict</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_create_df</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">aggregate</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_aggregate_results</span><span class="p">(</span><span class="n">exploration_name</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_aggregate_results</span><span class="p">(</span><span class="n">exploration_name</span><span class="p">,</span> <span class="n">arrays</span><span class="o">=</span><span class="n">arrays</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">close_hdf</span><span class="p">()</span>
 </code></pre>
 </div>
