@@ -42,7 +42,7 @@ pip install .
 ```
 
 # Example usage 🐝
-Setting up an exploration is as easy as can be!
+Feel free to have a look at the [Documentation page](https://caglorithm.github.io/mopet/). Setting up an exploration is as easy as can be!
 
 ```python
 # first we define an toy evaluation function
