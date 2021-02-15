@@ -40,7 +40,7 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@4.0.0
         with:
             folder: site
-            target-folder: 'pr'
+            target-folder: 'predeploy'
             branch: gh-pages
             commit-message: 'PR predeployment'
       - name: Deploy 🚀
