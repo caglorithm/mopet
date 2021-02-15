@@ -1,0 +1,3 @@
+# Mopet
+
+::: mopet.mopet
