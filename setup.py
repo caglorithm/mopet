@@ -11,7 +11,7 @@ with open("requirements.txt") as f:
 
 setuptools.setup(
     name="mopet",
-    version="0.1.6",
+    version="0.1.7",
     description="The mildly ominous parameter exploration toolkit",
     long_description=long_description,
     long_description_content_type="text/markdown",
