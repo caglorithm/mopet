@@ -1,0 +1,806 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.8">
+    
+    
+      
+        <title>Minimal example - Mopet</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.cb6bc1d0.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.39b8e14a.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="../../css/ansi-colours.css">
+    
+      <link rel="stylesheet" href="../../css/jupyter-cells.css">
+    
+      <link rel="stylesheet" href="../../css/pandas-dataframe.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="Mopet" class="md-header-nav__button md-logo" aria-label="Mopet">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            Mopet
+          </span>
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            
+              Minimal example
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/caglorithm/mopet/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    caglorithm/mopet
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Mopet" class="md-nav__button md-logo" aria-label="Mopet">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Mopet
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/caglorithm/mopet/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    caglorithm/mopet
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mopet/" class="md-nav__link">
+        Mopet
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" checked>
+      
+      <label class="md-nav__link" for="nav-3">
+        Examples
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Examples" data-md-level="1">
+        <label class="md-nav__title" for="nav-3">
+          <span class="md-nav__icon md-icon"></span>
+          Examples
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+          
+            
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Minimal example
+      </a>
+      
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../neurolib_brain_network/" class="md-nav__link">
+        Neurolib brain network
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../neurolib_example/" class="md-nav__link">
+        Neurolib example
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../readme_example/" class="md-nav__link">
+        Readme example
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/caglorithm/mopet/edit/master/docs/examples/minimal_example.ipynb" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                  <h1>Minimal example</h1>
+                
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script>
+(function() {
+  function addWidgetsRenderer() {
+    var mimeElement = document.querySelector('script[type="application/vnd.jupyter.widget-view+json"]');
+    var scriptElement = document.createElement('script');
+    var widgetRendererSrc = 'https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js';
+    var widgetState;
+
+    // Fallback for older version:
+    try {
+      widgetState = mimeElement && JSON.parse(mimeElement.innerHTML);
+
+      if (widgetState && (widgetState.version_major < 2 || !widgetState.version_major)) {
+        widgetRendererSrc = 'jupyter-js-widgets@*/dist/embed.js';
+      }
+    } catch(e) {}
+
+    scriptElement.src = widgetRendererSrc;
+    document.body.appendChild(scriptElement);
+  }
+
+  document.addEventListener('DOMContentLoaded', addWidgetsRenderer);
+}());
+</script>
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="https://mybinder.org/v2/gh/caglorithm/mopet/master?filepath=docs%2Fexamples%2Fminimal_example.ipynb"><img alt="Binder" src="https://mybinder.org/badge_logo.svg" /></a></p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="highlight"><pre><span></span><code><span class="c1"># change into the root directory of the project</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;examples&quot;</span><span class="p">:</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">)</span>
+
+<span class="o">%</span><span class="n">load_ext</span> <span class="n">autoreload</span>
+<span class="o">%</span><span class="n">autoreload</span> <span class="mi">2</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+</code></pre></div>
+
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="n">matplotlib</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">mopet</span>
+
+<span class="c1"># a nice color map</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;image.cmap&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;plasma&#39;</span>
+
+<span class="err">!</span><span class="n">rm</span> <span class="n">exploration</span><span class="o">.</span><span class="n">h5</span>
+
+<span class="k">def</span> <span class="nf">evalFunction</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="n">result_float</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">((</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">result_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">131</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5000</span><span class="p">))</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">result</span><span class="p">[</span><span class="s2">&quot;float_result&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result_float</span>
+    <span class="n">result</span><span class="p">[</span><span class="s2">&quot;array_result&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result_array</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+<span class="n">explore_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">21</span><span class="p">),</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">21</span><span class="p">)}</span>
+
+<span class="n">ex</span> <span class="o">=</span> <span class="n">mopet</span><span class="o">.</span><span class="n">Exploration</span><span class="p">(</span><span class="n">evalFunction</span><span class="p">,</span> <span class="n">explore_params</span><span class="p">)</span>
+</code></pre></div>
+
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+<code>Requirement already satisfied: matplotlib in /Users/caglar/anaconda/lib/python3.7/site-packages (3.1.3)
+Requirement already satisfied: python-dateutil&gt;=2.1 in /Users/caglar/anaconda/lib/python3.7/site-packages (from matplotlib) (2.8.0)
+Requirement already satisfied: cycler&gt;=0.10 in /Users/caglar/anaconda/lib/python3.7/site-packages (from matplotlib) (0.10.0)
+Requirement already satisfied: numpy&gt;=1.11 in /Users/caglar/anaconda/lib/python3.7/site-packages (from matplotlib) (1.18.1)
+Requirement already satisfied: kiwisolver&gt;=1.0.1 in /Users/caglar/anaconda/lib/python3.7/site-packages (from matplotlib) (1.1.0)
+Requirement already satisfied: pyparsing!=2.0.4,!=2.1.2,!=2.1.6,&gt;=2.0.1 in /Users/caglar/anaconda/lib/python3.7/site-packages (from matplotlib) (2.4.0)
+Requirement already satisfied: six&gt;=1.5 in /Users/caglar/anaconda/lib/python3.7/site-packages (from python-dateutil&gt;=2.1-&gt;matplotlib) (1.13.0)
+Requirement already satisfied: setuptools in /Users/caglar/anaconda/lib/python3.7/site-packages (from kiwisolver&gt;=1.0.1-&gt;matplotlib) (45.1.0)
+</code>
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="highlight"><pre><span></span><code><span class="n">ex</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>
+<code>2020-04-20 21:46:37,480   INFO resource_spec.py:212 -- Starting Ray with 3.27 GiB memory available for workers and up to 1.64 GiB for objects. You can adjust these settings with ray.init(memory=&lt;bytes&gt;, object_store_memory=&lt;bytes&gt;).
+2020-04-20 21:46:37,952 INFO services.py:1093 -- View the Ray dashboard at <span class="ansi-green-intense-fg ansi-bold">localhost:8265</span>
+INFO:root:Starting 441 jobs.
+100%|██████████| 441/441 [00:03&lt;00:00, 118.57it/s]
+INFO:root:Runs took 3.727734088897705 s to submit.
+100%|██████████| 441/441 [00:01&lt;00:00, 224.70it/s]
+INFO:root:Runs and storage took 1.9686880111694336 s to complete.
+</code>
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="highlight"><pre><span></span><code><span class="n">ex</span><span class="o">.</span><span class="n">load_results</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>
+<code>INFO:root:exploration.h5 opened for reading.
+INFO:root:Gettings runs of exploration ``exploration_2020_04_20_21H_46M_37S``
+100%|██████████| 441/441 [00:01&lt;00:00, 379.44it/s]
+INFO:root:Creating new results DataFrame
+INFO:root:Aggregating scalar results ...
+100%|██████████| 441/441 [00:00&lt;00:00, 502.89it/s]
+INFO:root:exploration.h5 closed.
+</code>
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="highlight"><pre><span></span><code><span class="nb">len</span><span class="p">(</span><span class="n">ex</span><span class="o">.</span><span class="n">results</span><span class="p">)</span>
+</code></pre></div>
+
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_text output_subarea output_execute_result">
+<pre>
+<code>441</code>
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="highlight"><pre><span></span><code><span class="n">ex</span><span class="o">.</span><span class="n">get_run</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</code></pre></div>
+
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>
+<code>INFO:root:exploration.h5 opened for reading.
+</code>
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="output_text output_subarea output_execute_result">
+<pre>
+<code>{&#39;array_result&#39;: array([[ 5.97391695e-01, -1.85095801e+00,  6.36841315e-01, ...,
+         -3.62676558e-01, -2.09826990e-01,  1.40291897e+00],
+        [ 1.75607948e+00,  1.05066847e+00,  8.95172810e-01, ...,
+         -7.77506344e-01, -9.06090056e-01,  9.48383121e-04],
+        [-2.20332623e-01,  6.78649005e-01, -8.93520258e-01, ...,
+         -2.22872632e+00, -1.19226748e+00, -1.38276576e-01],
+        ...,
+        [ 7.76605125e-01, -5.22077056e-01,  4.18754799e-01, ...,
+          1.15120920e+00, -3.58705657e-01, -9.63737910e-01],
+        [ 2.55826835e+00, -5.37584683e-01,  6.39454329e-01, ...,
+         -1.99267714e-01,  5.92317635e-01, -7.96497612e-01],
+        [ 3.18325277e-01,  2.13536242e+00,  1.12065066e+00, ...,
+         -4.70540293e-01,  1.08954728e+00,  4.97407056e-01]]),
+ &#39;float_result&#39;: 7.0}</code>
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ex</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+    <span class="n">ex</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">r</span><span class="p">,</span> <span class="s2">&quot;mean_array_result&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ex</span><span class="o">.</span><span class="n">get_run</span><span class="p">(</span><span class="n">r</span><span class="p">)[</span><span class="s1">&#39;array_result&#39;</span><span class="p">])</span>
+</code></pre></div>
+
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="highlight"><pre><span></span><code><span class="n">ex</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;columns&#39;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="scoped">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>x</th>
+<th>y</th>
+<th>float_result</th>
+<th>mean_array_result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>-2</td>
+<td>-2</td>
+<td>7.00</td>
+<td>0.006656</td>
+</tr>
+<tr>
+<th>1</th>
+<td>-2</td>
+<td>-1.8</td>
+<td>6.24</td>
+<td>0.000567</td>
+</tr>
+<tr>
+<th>10</th>
+<td>-2</td>
+<td>0</td>
+<td>3.00</td>
+<td>0.002344</td>
+</tr>
+<tr>
+<th>100</th>
+<td>-1.2</td>
+<td>1.2</td>
+<td>1.88</td>
+<td>-0.000210</td>
+</tr>
+<tr>
+<th>101</th>
+<td>-1.2</td>
+<td>1.4</td>
+<td>2.40</td>
+<td>0.003098</td>
+</tr>
+<tr>
+<th>...</th>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<th>95</th>
+<td>-1.2</td>
+<td>0.2</td>
+<td>0.48</td>
+<td>0.003001</td>
+</tr>
+<tr>
+<th>96</th>
+<td>-1.2</td>
+<td>0.4</td>
+<td>0.60</td>
+<td>-0.000337</td>
+</tr>
+<tr>
+<th>97</th>
+<td>-1.2</td>
+<td>0.6</td>
+<td>0.80</td>
+<td>0.001959</td>
+</tr>
+<tr>
+<th>98</th>
+<td>-1.2</td>
+<td>0.8</td>
+<td>1.08</td>
+<td>-0.010278</td>
+</tr>
+<tr>
+<th>99</th>
+<td>-1.2</td>
+<td>1</td>
+<td>1.44</td>
+<td>0.002511</td>
+</tr>
+</tbody>
+</table>
+<p>441 rows × 4 columns</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="highlight"><pre><span></span><code><span class="n">pivoted</span> <span class="o">=</span> <span class="n">ex</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="s1">&#39;float_result&#39;</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">aggfunc</span><span class="o">=</span><span class="s1">&#39;first&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="highlight"><pre><span></span><code><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">pivoted</span><span class="p">,</span> \
+           <span class="n">extent</span> <span class="o">=</span> <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">ex</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">x</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">ex</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">x</span><span class="p">),</span>
+                     <span class="nb">min</span><span class="p">(</span><span class="n">ex</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">y</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">ex</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">y</span><span class="p">)],</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Distance from unit circle&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_text output_subarea output_execute_result">
+<pre>
+<code>Text(0, 0.5, &#39;y&#39;)</code>
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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
+"
+>
+</div>
+</div>
+</div>
+</div>
+</div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="../../mopet/" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Mopet
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="../neurolib_brain_network/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Neurolib brain network
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+  <div class="md-footer-social">
+    
+      
+      
+      <a href="https://twitter.com/caglorithm" target="_blank" rel="noopener" title="caglrotihm on Twitter" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+      </a>
+    
+  </div>
+
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.18f0862e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.994580cf.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.9c0e82ba.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="../../js/config.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
