@@ -175,7 +175,7 @@ class Exploration:
 
         self._shutdown_ray()
 
-    def load_results(self, filename=None, exploration_name=None, aggregate=True, all=False):
+    def load_results(self, filename=None, exploration_name=None, arrays=False, as_dict=False):
         """Load results from previous explorations. This function
         will open an HDF file and look for an exploration. It will
         create a Pandas `Dataframe` object (accessible through the
@@ -183,23 +183,25 @@ class Exploration:
 
         You can load the exploration results using following parameters:
 
-        - If `aggregate==True`, all scalar results (such as `float`
-        or `int`) from the exploration will be added to the Dataframe.
-        - If `all==True`, then all results, including arrays and other
-        types, will be saved in the attribute `.results`. This can take
+        - If `arrays==False`, all scalar results from the exploration
+        will be added to the Dataframe (default).
+        - If `arrays==True`, then all results, including (larger) numpy arrays
+        will be loaded. This can take
         up a lot of RAM since all results will be available. Only
         use this option if you know that you have enough memory. Otherwise,
         you might want to skip this and load results separately using the
         method `.get_run()`.
+        - If `as_dict==True`, all results will be loaded and saved to the attribute
+        `.results` regardless of their type. Will use even more memory.
 
         :param filename: Filename of HDF file, uses default filename or previously used filename if not given, defaults to None
         :type filename: str, optional
         :param exploration_name: Name of the exploration, same as the group names of the explorations in the HDF file, defaults to None
         :type exploration_name: str, optional
-        :param aggregate: Aggregate scalar results into the results Dataframe. If this option is enabled, defaults to True
-        :type aggregate: bool, optional
-        :param all: Load all results into a dictionary available as the attribute `.results`. Can use a lot of RAM, defaults to False
-        :type all: bool, optional
+        :param arrays: Aggregate all results, including arrays into the results Dataframe, defaults to False
+        :type arrays: bool, optional
+        :param as_dict: Load all results into a dictionary available as the attribute `.results`. Can use a lot of RAM, defaults to False
+        :type as_dict: bool, optional
         :raises Hdf5FileNotExistsError: if file with `filename` does not exist.
         """
         if exploration_name is None:
@@ -208,17 +210,16 @@ class Exploration:
             self.exploration_name = exploration_name
 
         self._open_hdf(filename=filename)
-        self._load_all_results(exploration_name, all=all)
+        self._load_all_results(exploration_name, as_dict=as_dict)
         self._create_df()
-        if aggregate:
-            self._aggregate_results(exploration_name)
+        self._aggregate_results(exploration_name, arrays=arrays)
         self.close_hdf()
 
     def get_run(self, run_id=None, run_name=None, filename=None, exploration_name=None):
         """Get a single result from a previous exploration. This function
         will load a single result from the HDF file. Use this function
         if you want to avoid loading all results to memory, which you can
-        do using `.load_results(all=True)`.
+        do using `.load_results(arrays=True)`.
 
         Note: This function will open the HDF for reading but will not close
         it afterwards! This is to speed up many sequential loads but it also
@@ -444,13 +445,12 @@ class Exploration:
         """Go through all results saved in `.results` and store all floats in the results table.
 
         TODO: Direct reading from hdf without having to load it to memory, like in neurolib
-        TODO: Storage of non-scalar values, like in neurolib
 
         :param exploration_name: [description], defaults to None
         :type exploration_name: [type], optional
         """
         nan_value = np.nan
-        logging.info("Aggregating scalar results ...")
+        logging.info("Aggregating all results ...")
         for runId, parameters in tqdm.tqdm(self.dfResults.iterrows(), total=len(self.dfResults)):
             result = self.get_run(runId)
             for key, value in result.items():
@@ -458,7 +458,7 @@ class Exploration:
                 # save it to the datafram accordingly
                 if isinstance(value, (float, int)):
                     self.dfResults.loc[runId, key] = value
-                elif isinstance(value, np.ndarray) and arrays == True:
+                elif isinstance(value, np.ndarray) and arrays:
                     # to save a numpy array, convert column to object type
                     if key not in self.dfResults:
                         self.dfResults[key] = None
@@ -469,13 +469,14 @@ class Exploration:
         # drop nan columns
         self.dfResults = self.dfResults.dropna(axis="columns", how="all")
 
-    def _load_all_results(self, exploration_name=None, all=True):
-        """Load all results in hdf file into `.results` (if all=True). Load all explored parameters into `.params`.
+    def _load_all_results(self, exploration_name=None, as_dict=False):
+        """Load all results in hdf file into `.results` if `as_dict==True`.
+        Load all explored parameters into `.params`.
 
         :param exploration_name: Name of the run, defaults to None
         :type exploration_name: str, optional
-        :param all: Whether to load everything into ram or not, defaults to True
-        :type all: bool, optional
+        :param arrays: Whether to load arrays into ram or not, defaults to True
+        :type arrays: bool, optional
         :raises Hdf5FileNotExistsError, ExplorationNotFoundError
         """
         if exploration_name is None:
@@ -500,8 +501,8 @@ class Exploration:
             # get id of run
             run_id = int(run_name[len(self.RUN_PREFIX) :])
             self.run_ids.append(run_id)
-            # get results data
-            if all:
+            # load results to .results attribute, if as_dict
+            if as_dict:
                 self.results[run_id] = self._read_group_as_dict(hdf_run)
             self.params[run_id] = self._get_run_parameters(hdf_run)
 

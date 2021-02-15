@@ -31,7 +31,7 @@ class TestExploration(unittest.TestCase):
         ex = mopet.Exploration(eval_function, explore_params, params)
 
         ex.run()
-        ex.load_results(all=True)
+        ex.load_results(arrays=True)
         # check if results are in the dataframe
         self.assertIn("array_result", ex.df)
         self.assertIn("float_result", ex.df)
@@ -57,7 +57,7 @@ class TestExploration(unittest.TestCase):
         # Initialize, run and load.
         ex = mopet.Exploration(lambda params: {}, explore_params, exploration_name="test")
         ex.run()
-        ex.load_results(all=True)
+        ex.load_results(arrays=True)
 
         # Run again, but exploration already exists -> will throw exception.
         self.assertRaises(ExplorationExistsError, ex.run)
@@ -94,7 +94,7 @@ class TestExploration(unittest.TestCase):
 
         ex = mopet.Exploration(run, {"a": np.arange(0, 1, 0.5)})
         ex.run()
-        ex.load_results(all=True)
+        ex.load_results(as_dict=True)
 
         print(ex.df)
 
