@@ -35,12 +35,12 @@ jobs:
       - name: Build documentation 👷‍♀️
         run: |
           mkdocs build
-      - name: Predeploy to pull_request directory ✈️
+      - name: Predeploy on PR ✈️
         if: github.event_name == 'pull_request'
         uses: JamesIves/github-pages-deploy-action@4.0.0
         with:
             folder: site
-            target-folder: 'pull_request'
+            target-folder: 'pr'
             branch: gh-pages
             commit-message: 'PR predeployment'
       - name: Deploy 🚀
