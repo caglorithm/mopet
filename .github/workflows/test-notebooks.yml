@@ -27,4 +27,4 @@ jobs:
           pip install .
       - name: Test notebooks with treon 🧪
         run: |
-          treon -e examples/neurolib_brain_network.ipynb examples/
+          treon examples/
