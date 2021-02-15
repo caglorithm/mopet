@@ -620,11 +620,11 @@ INFO:root:Running stage 3
 <div class="input">
 
 <div class="highlight"><pre><span></span><code><span class="c1"># NOTE: These values are low for testing</span>
-<span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6</span><span class="o">*</span><span class="mf">1000.</span>
+<span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span><span class="o">*</span><span class="mf">1000.</span>
 
-<span class="n">explore_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-                 <span class="p">,</span><span class="s2">&quot;K_gl&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-                 <span class="p">,</span><span class="s2">&quot;sigma_ou&quot;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">explore_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                 <span class="p">,</span><span class="s2">&quot;K_gl&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                 <span class="p">,</span><span class="s2">&quot;sigma_ou&quot;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
                  <span class="p">}</span>
 
 <span class="c1"># we need this random filename to avoid testing clashes</span>
