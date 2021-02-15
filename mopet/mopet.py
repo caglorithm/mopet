@@ -444,13 +444,12 @@ class Exploration:
         """Go through all results saved in `.results` and store all floats in the results table.
 
         TODO: Direct reading from hdf without having to load it to memory, like in neurolib
-        TODO: Storage of non-scalar values, like in neurolib
 
         :param exploration_name: [description], defaults to None
         :type exploration_name: [type], optional
         """
         nan_value = np.nan
-        logging.info("Aggregating scalar results ...")
+        logging.info("Aggregating all results ...")
         for runId, parameters in tqdm.tqdm(self.dfResults.iterrows(), total=len(self.dfResults)):
             result = self.get_run(runId)
             for key, value in result.items():
