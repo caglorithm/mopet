@@ -1,6 +1,9 @@
 name: documentation
 
 on:
+  push:
+    branches:
+      - master
   pull_request:
     branches:
       - master
@@ -32,7 +35,16 @@ jobs:
       - name: Build documentation 👷‍♀️
         run: |
           mkdocs build
+      - name: Predeploy on PR ✈️
+        if: github.event_name == 'pull_request'
+        uses: JamesIves/github-pages-deploy-action@4.0.0
+        with:
+            folder: site
+            target-folder: 'predeploy'
+            branch: gh-pages
+            commit-message: 'PR predeployment'
       - name: Deploy 🚀
+        if: github.event_name == 'push'
         uses: JamesIves/github-pages-deploy-action@4.0.0
         with:
             folder: site
